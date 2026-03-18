@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 440" font-family="Arial, sans-serif">
+  <!-- Background -->
+  <rect width="580" height="440" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="290" y="36" font-size="18" font-weight="bold" fill="#1e293b" text-anchor="middle">Cycle de vie d'une Promise</text>
+
+  <!-- Pending state (center top) -->
+  <circle cx="290" cy="110" r="45" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5"/>
+  <text x="290" y="106" font-size="13" font-weight="bold" fill="#92400e" text-anchor="middle">Pending</text>
+  <text x="290" y="122" font-size="10" fill="#92400e" text-anchor="middle">⏳ en attente</text>
+
+  <!-- Arrow to Fulfilled -->
+  <line x1="250" y1="150" x2="150" y2="210" stroke="#60B155" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+  <text x="180" y="178" font-size="11" font-weight="600" fill="#60B155">resolve()</text>
+
+  <!-- Arrow to Rejected -->
+  <line x1="330" y1="150" x2="430" y2="210" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrowRed)"/>
+  <text x="380" y="178" font-size="11" font-weight="600" fill="#ef4444">reject()</text>
+
+  <!-- Fulfilled state -->
+  <rect x="50" y="210" width="200" height="70" rx="14" fill="#f0fdf4" stroke="#60B155" stroke-width="2.5"/>
+  <text x="150" y="238" font-size="14" font-weight="bold" fill="#166534" text-anchor="middle">Fulfilled ✅</text>
+  <text x="150" y="258" font-size="11" fill="#166534" text-anchor="middle">"Voici ton café !"</text>
+  <text x="150" y="274" font-size="10" fill="#15803d" text-anchor="middle">→ .then(fn)</text>
+
+  <!-- Rejected state -->
+  <rect x="330" y="210" width="200" height="70" rx="14" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="430" y="238" font-size="14" font-weight="bold" fill="#991b1b" text-anchor="middle">Rejected ❌</text>
+  <text x="430" y="258" font-size="11" fill="#991b1b" text-anchor="middle">"Plus de café..."</text>
+  <text x="430" y="274" font-size="10" fill="#b91c1c" text-anchor="middle">→ .catch(fn)</text>
+
+  <!-- Separator -->
+  <line x1="40" y1="308" x2="540" y2="308" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- Code example -->
+  <text x="40" y="335" font-size="13" font-weight="600" fill="#64748b">Syntaxe</text>
+
+  <!-- Code block -->
+  <rect x="40" y="345" width="500" height="75" rx="8" fill="#1e293b"/>
+  <text x="55" y="366" font-size="12" fill="#f59e0b" font-family="monospace">const</text>
+  <text x="95" y="366" font-size="12" fill="#e2e8f0" font-family="monospace">cafe =</text>
+  <text x="145" y="366" font-size="12" fill="#f59e0b" font-family="monospace">new</text>
+  <text x="175" y="366" font-size="12" fill="#60B155" font-family="monospace">Promise</text>
+  <text x="230" y="366" font-size="12" fill="#e2e8f0" font-family="monospace">(</text>
+  <text x="238" y="366" font-size="12" fill="#f59e0b" font-family="monospace">function</text>
+  <text x="298" y="366" font-size="12" fill="#e2e8f0" font-family="monospace">(resolve, reject) {</text>
+
+  <text x="70" y="386" font-size="12" fill="#60B155" font-family="monospace">resolve</text>
+  <text x="128" y="386" font-size="12" fill="#e2e8f0" font-family="monospace">(</text>
+  <text x="136" y="386" font-size="12" fill="#a5f3fc" font-family="monospace">"Voici ton café !"</text>
+  <text x="300" y="386" font-size="12" fill="#e2e8f0" font-family="monospace">)</text>
+
+  <text x="55" y="406" font-size="12" fill="#e2e8f0" font-family="monospace">})</text>
+
+  <!-- .then box -->
+  <rect x="340" y="356" width="88" height="28" rx="6" fill="#60B155"/>
+  <text x="384" y="375" font-size="11" font-weight="600" fill="#fff" text-anchor="middle">.then(fn)</text>
+
+  <!-- .catch box -->
+  <rect x="440" y="356" width="88" height="28" rx="6" fill="#ef4444"/>
+  <text x="484" y="375" font-size="11" font-weight="600" fill="#fff" text-anchor="middle">.catch(fn)</text>
+
+  <!-- Badge -->
+  <rect x="440" y="20" width="120" height="28" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="500" y="39" font-size="11" font-weight="600" fill="#92400e" text-anchor="middle">Asynchrone</text>
+
+  <!-- Arrows defs -->
+  <defs>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8" fill="#60B155"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8" fill="#ef4444"/>
+    </marker>
+  </defs>
+</svg>

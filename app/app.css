@@ -1,0 +1,608 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/* ===========================================
+   NUXY DESIGN SYSTEM
+   Basé sur la mascotte dragon
+   Toutes les ressources sont locales (pas de CDN)
+   Palette Coolors : https://coolors.co/60b155-33a6a6-ffd966-561e46-d45e95-c8b4dc
+   =========================================== */
+
+/* -----------------------------------------
+   EXTENSION TAILWIND CSS v4 - COULEURS NUXY
+   Usage : bg-nuxy-green, text-nuxy-teal, border-nuxy-gold, etc.
+   ----------------------------------------- */
+@theme {
+  /* ==============================================
+     PALETTE MARQUE - Couleurs du dragon/logo
+     Usage : illustrations, décorations, backgrounds
+     ============================================== */
+
+  /* VERTS (corps) */
+  --color-nuxy-green: #60B155;
+  --color-nuxy-green-dark: #226347;
+  --color-nuxy-green-medium: #4D9352;
+  --color-nuxy-green-light: #ACDC7E;
+  --color-nuxy-green-pale: #C8FAA0;
+
+  /* TEALS (ventre/écailles) */
+  --color-nuxy-teal: #33A6A6;
+  --color-nuxy-teal-dark: #246B6B;
+  --color-nuxy-teal-light: #50C8C8;
+
+  /* JAUNES (cornes) */
+  --color-nuxy-gold: #FFD966;
+  --color-nuxy-gold-dark: #FFC107;
+
+  /* VIOLETS/ROSES (détails) */
+  --color-nuxy-purple: #561E46;
+  --color-nuxy-purple-dark: #3C1450;
+  --color-nuxy-pink: #D45E95;
+  --color-nuxy-pink-dark: #AA4B82;
+
+  /* LAVANDES (yeux/accents) */
+  --color-nuxy-lavender: #C8B4DC;
+  --color-nuxy-lavender-light: #E6D2F0;
+
+  /* CRÈMES (dents/sourire) */
+  --color-nuxy-cream: #F0F5C8;
+  --color-nuxy-cream-light: #E6F0AA;
+
+  /* NEUTRES */
+  --color-nuxy-white: #F8FAFC;
+  --color-nuxy-black: #0F172A;
+
+  /* ==============================================
+     PALETTE ACTION - Couleurs UI (style Duolingo)
+     Usage : boutons, liens, textes cliquables
+     ============================================== */
+
+  /* Bouton primaire - Vert dragon vif */
+  --color-action-primary: #60B155;
+  --color-action-primary-hover: #4D9352;
+  --color-action-primary-text: #FFFFFF;
+
+  /* Bouton secondaire - Teal */
+  --color-action-secondary: #33A6A6;
+  --color-action-secondary-hover: #246B6B;
+  --color-action-secondary-text: #FFFFFF;
+
+  /* Bouton accent - Or (achievements) */
+  --color-action-accent: #FFD966;
+  --color-action-accent-hover: #FFC107;
+  --color-action-accent-text: #0F172A;
+
+  /* Bouton premium - Violet */
+  --color-action-premium: #561E46;
+  --color-action-premium-hover: #3C1450;
+  --color-action-premium-text: #FFFFFF;
+
+  /* Bouton fun - Rose */
+  --color-action-fun: #D45E95;
+  --color-action-fun-hover: #AA4B82;
+  --color-action-fun-text: #FFFFFF;
+
+  /* Bouton danger/destructif */
+  --color-action-danger: #DC2626;
+  --color-action-danger-hover: #B91C1C;
+  --color-action-danger-text: #FFFFFF;
+
+  /* Liens texte - Vert dragon (cohérent avec primary) */
+  --color-link: #60B155;
+  --color-link-hover: #4D9352;
+
+  /* ==============================================
+     COULEURS ÉDITEUR (mode sombre)
+     ============================================== */
+  --color-editor-bg: #1e1e1e;
+  --color-editor-scrollbar-track: #1a1a1a;
+  --color-editor-scrollbar-thumb: #4a4a4a;
+  --color-editor-scrollbar-hover: #5a5a5a;
+}
+
+/* -----------------------------------------
+   POLICES LOCALES - Inter
+   ----------------------------------------- */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter/Inter-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter/Inter-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter/Inter-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter/Inter-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/inter/Inter-ExtraBold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/inter/Inter-Black.woff2') format('woff2');
+}
+
+/* -----------------------------------------
+   POLICES LOCALES - JetBrains Mono
+   ----------------------------------------- */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono/JetBrainsMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono/JetBrainsMono-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono/JetBrainsMono-SemiBold.woff2') format('woff2');
+}
+
+/* -----------------------------------------
+   VARIABLES CSS LEGACY (pour compatibilité)
+   Préférer les classes Tailwind : bg-nuxy-green, text-nuxy-teal, etc.
+   ----------------------------------------- */
+:root {
+  /* Palette marque (dragon) - Valeurs directes pour var() */
+  --nuxy-green: #60B155;
+  --nuxy-green-dark: #226347;
+  --nuxy-green-medium: #4D9352;
+  --nuxy-green-light: #ACDC7E;
+  --nuxy-green-pale: #C8FAA0;
+  --nuxy-teal: #33A6A6;
+  --nuxy-teal-dark: #246B6B;
+  --nuxy-teal-light: #50C8C8;
+  --nuxy-gold: #FFD966;
+  --nuxy-gold-dark: #FFC107;
+  --nuxy-purple: #561E46;
+  --nuxy-purple-dark: #3C1450;
+  --nuxy-pink: #D45E95;
+  --nuxy-pink-dark: #AA4B82;
+  --nuxy-lavender: #C8B4DC;
+  --nuxy-lavender-light: #E6D2F0;
+  --nuxy-cream: #F0F5C8;
+  --nuxy-cream-light: #E6F0AA;
+
+  /* Palette action (UI) - Style Duolingo */
+  --action-primary: #60B155;
+  --action-primary-hover: #4D9352;
+  --action-secondary: #33A6A6;
+  --action-secondary-hover: #246B6B;
+  --action-accent: #FFD966;
+  --action-accent-hover: #FFC107;
+  --action-premium: #561E46;
+  --action-premium-hover: #3C1450;
+  --action-fun: #D45E95;
+  --action-fun-hover: #AA4B82;
+  --action-danger: #DC2626;
+  --action-danger-hover: #B91C1C;
+  --link-color: #60B155;
+  --link-hover: #4D9352;
+}
+
+/* -----------------------------------------
+   POLITIQUE DES COULEURS NUXY
+   Palette extraite de la mascotte dragon
+   Style : Duolingo (couleurs vives et fun)
+   -----------------------------------------
+
+   ┌─────────────────────────────────────────┐
+   │  STRATÉGIE D'UTILISATION DES COULEURS  │
+   └─────────────────────────────────────────┘
+
+   ╔═══════════════════════════════════════════╗
+   ║  1. VERT DRAGON (#60B155) - PRIMARY       ║
+   ╠═══════════════════════════════════════════╣
+   ║  • Boutons CTA principaux (btn-cta)       ║
+   ║  • Liens de navigation actifs             ║
+   ║  • Barres de progression                  ║
+   ║  • Indicateurs de succès                  ║
+   ║  • Logo et identité de marque             ║
+   ╚═══════════════════════════════════════════╝
+
+   ╔═══════════════════════════════════════════╗
+   ║  2. TEAL (#33A6A6) - SECONDARY            ║
+   ╠═══════════════════════════════════════════╣
+   ║  • Boutons secondaires (btn-cta-teal)     ║
+   ║  • Liens informatifs                      ║
+   ║  • Badges informatifs                     ║
+   ║  • Backgrounds décoratifs (gradients)     ║
+   ╚═══════════════════════════════════════════╝
+
+   ╔═══════════════════════════════════════════╗
+   ║  3. OR (#FFD966) - ACHIEVEMENTS           ║
+   ╠═══════════════════════════════════════════╣
+   ║  • Badges de réussite / achievements      ║
+   ║  • Étoiles et récompenses                 ║
+   ║  • Highlights importants                  ║
+   ║  • Messages d'avertissement (warning)     ║
+   ╚═══════════════════════════════════════════╝
+
+   ╔═══════════════════════════════════════════╗
+   ║  4. VIOLET (#561E46) - PREMIUM            ║
+   ╠═══════════════════════════════════════════╣
+   ║  • Éléments premium/spéciaux              ║
+   ║  • Accents sur fond sombre                ║
+   ║  • Titres de sections importantes         ║
+   ╚═══════════════════════════════════════════╝
+
+   ╔═══════════════════════════════════════════╗
+   ║  5. ROSE (#D45E95) - FUN / NOTIFICATIONS  ║
+   ╠═══════════════════════════════════════════╣
+   ║  • Notifications "nouveau"                ║
+   ║  • Badges "fun" / easter eggs             ║
+   ║  • Éléments joyeux / célébrations         ║
+   ╚═══════════════════════════════════════════╝
+
+   ╔═══════════════════════════════════════════╗
+   ║  6. LAVANDE (#C8B4DC) - SUBTIL            ║
+   ╠═══════════════════════════════════════════╣
+   ║  • Backgrounds très légers                ║
+   ║  • Bordures subtiles                      ║
+   ║  • Éléments désactivés (hover)            ║
+   ╚═══════════════════════════════════════════╝
+
+   ┌─────────────────────────────────────────┐
+   │  COULEURS SÉMANTIQUES (Tailwind)        │
+   └─────────────────────────────────────────┘
+   - emerald/green → Success (validation OK)
+   - red           → Error (erreurs)
+   - amber/yellow  → Warning (avertissements)
+   - blue/cyan     → Info (informations)
+   - gray/slate    → Neutral (fonds, textes)
+
+   ┌─────────────────────────────────────────┐
+   │  COLORATION SYNTAXIQUE (éditeur)        │
+   └─────────────────────────────────────────┘
+   Conserver les couleurs standard du thème :
+   - purple → mots-clés (const, let, function)
+   - yellow → strings
+   - blue   → built-ins (console, document)
+   - green  → fonctions
+
+   ----------------------------------------- */
+
+/* -----------------------------------------
+   SCROLLBAR ÉDITEUR (mode sombre)
+   Usage : class="scrollbar-editor"
+   ----------------------------------------- */
+.scrollbar-editor::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-editor::-webkit-scrollbar-track {
+  background: var(--color-editor-scrollbar-track);
+}
+
+.scrollbar-editor::-webkit-scrollbar-thumb {
+  background: var(--color-editor-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.scrollbar-editor::-webkit-scrollbar-thumb:hover {
+  background: var(--color-editor-scrollbar-hover);
+}
+
+.scrollbar-editor::-webkit-scrollbar-corner {
+  background: var(--color-editor-scrollbar-track);
+}
+
+/* -----------------------------------------
+   APPLICATION DES POLICES
+   ----------------------------------------- */
+
+/* Texte principal - Inter */
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Code et éditeur - JetBrains Mono */
+code, pre, .font-mono,
+kbd, samp,
+[class*="cm-"] {
+  font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace !important;
+  font-feature-settings: 'liga' off, 'calt' off;
+}
+
+/* Animation fade-in réutilisable */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Animation flottante pour les éléments du hero */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 4s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* -----------------------------------------
+   SURCHARGES NUXT UI - Couleurs Action
+   Applique les couleurs action optimisées pour le contraste
+   ----------------------------------------- */
+
+/* Boutons primaires solides - utilise action-primary */
+[data-ui="button"].bg-green-500,
+[data-ui="button"].bg-green-600,
+.btn-primary {
+  background-color: var(--action-primary);
+}
+
+[data-ui="button"].bg-green-500:hover,
+[data-ui="button"].bg-green-600:hover,
+.btn-primary:hover {
+  background-color: var(--action-primary-hover);
+}
+
+/* Boutons secondaires - utilise action-secondary */
+[data-ui="button"].bg-teal-500,
+[data-ui="button"].bg-teal-600,
+.btn-secondary {
+  background-color: var(--action-secondary);
+}
+
+[data-ui="button"].bg-teal-500:hover,
+[data-ui="button"].bg-teal-600:hover,
+.btn-secondary:hover {
+  background-color: var(--action-secondary-hover);
+}
+
+/* Boutons accent (gold) */
+.btn-accent {
+  background-color: var(--action-accent);
+  color: #0F172A;
+}
+
+.btn-accent:hover {
+  background-color: var(--action-accent-hover);
+}
+
+/* Liens globaux - DÉSACTIVÉ pour éviter les conflits avec les classes Tailwind */
+/* Les liens doivent utiliser des classes explicites comme text-nuxy-green-dark */
+/*
+a:not([class*="btn"]):not([class*="UButton"]) {
+  color: var(--link-color);
+}
+
+a:not([class*="btn"]):not([class*="UButton"]):hover {
+  color: var(--link-hover);
+}
+*/
+
+/* -----------------------------------------
+   CLASSES UTILITAIRES ACTION
+   Usage : class="btn-primary" ou class="btn-cta"
+   ----------------------------------------- */
+
+/* CTA Principal (Call To Action) - Style Duolingo FLAT */
+.btn-cta {
+  background-color: var(--action-primary);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.btn-cta:hover {
+  background-color: var(--action-primary-hover);
+}
+
+.btn-cta:active {
+  transform: scale(0.98);
+}
+
+/* CTA Teal (variante pour auth pages) - Style Duolingo FLAT */
+.btn-cta-teal {
+  background-color: var(--action-secondary);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.btn-cta-teal:hover {
+  background-color: var(--action-secondary-hover);
+}
+
+.btn-cta-teal:active {
+  transform: scale(0.98);
+}
+
+/* CTA Premium (violet) - Éléments spéciaux - Style Duolingo FLAT */
+.btn-cta-premium {
+  background-color: var(--action-premium);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.btn-cta-premium:hover {
+  background-color: var(--action-premium-hover);
+}
+
+.btn-cta-premium:active {
+  transform: scale(0.98);
+}
+
+/* CTA Fun (rose) - Notifications, célébrations - Style Duolingo FLAT */
+.btn-cta-fun {
+  background-color: var(--action-fun);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.btn-cta-fun:hover {
+  background-color: var(--action-fun-hover);
+}
+
+.btn-cta-fun:active {
+  transform: scale(0.98);
+}
+
+/* CTA Accent (or) - Achievements - Style Duolingo FLAT */
+.btn-cta-accent {
+  background-color: var(--action-accent);
+  color: #0F172A;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.btn-cta-accent:hover {
+  background-color: var(--action-accent-hover);
+}
+
+.btn-cta-accent:active {
+  transform: scale(0.98);
+}
+
+/* Badge achievement avec gold */
+.badge-achievement {
+  background-color: var(--action-accent);
+  color: var(--nuxy-black);
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/* Badge nouveau (rose) */
+.badge-new {
+  background-color: var(--action-fun);
+  color: white;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/* Badge premium (violet) */
+.badge-premium {
+  background-color: var(--action-premium);
+  color: white;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/* -----------------------------------------
+   MATRIX RAIN EFFECT
+   Usage : class="matrix-rain"
+   ----------------------------------------- */
+.matrix-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(96, 177, 85, 0.07) 3px,
+      rgba(96, 177, 85, 0.07) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 24px,
+      rgba(96, 177, 85, 0.04) 24px,
+      rgba(96, 177, 85, 0.04) 25px
+    );
+  animation: matrix-scroll 8s linear infinite;
+}
+
+@keyframes matrix-scroll {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 0 100px, 0 0;
+  }
+}
