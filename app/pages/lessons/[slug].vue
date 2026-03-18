@@ -2,16 +2,12 @@
 /**
  * Page de leçon dynamique
  *
- * Charge une leçon par son slug et affiche :
- * - LessonHeader (navigation sticky)
- * - Métadonnées (titre, description, durée, difficulté, type, objectifs)
- * - Contenu markdown (LessonContent)
- * - Actions selon le type de leçon :
- *   - guide : bouton "J'ai compris"
- *   - exercise : checklist (LessonChecklist)
- *   - quiz : quiz interactif (LessonQuiz)
- *   - project : message "En attente de validation"
- * - Navigation précédent/suivant (LessonNavigation)
+ * Layout clean, centré, avec :
+ * - Header sticky NuxyAI
+ * - Métadonnées (badges, titre, description, objectifs)
+ * - Contenu markdown pleine largeur
+ * - Actions selon le type (guide/exercise/quiz/project)
+ * - Navigation prev/next
  */
 
 definePageMeta({
@@ -22,21 +18,26 @@ const route = useRoute()
 const slug = route.params.slug as string
 
 // Charger la leçon
-const { lesson, isLoading, error } = useLessonData(`/lessons/${slug}`)
+const { data: lesson } = await useAsyncData(`lesson-${slug}`, () =>
+  queryCollection('lessons').path(`/lessons/${slug}`).first()
+)
 
-// SEO dynamique
+// 404 si introuvable
+if (!lesson.value) {
+  throw createError({ statusCode: 404, message: 'Leçon introuvable' })
+}
+
+// SEO
 useSeoMeta({
-  title: () => lesson.value ? `${lesson.value.title} - NuxyAI` : 'Leçon - NuxyAI',
-  description: () => lesson.value?.description || ''
+  title: `${lesson.value.title} - NuxyAI`,
+  description: lesson.value.description
 })
 
 // Progression
 const { startLesson, completeLesson, getLessonStatus } = useLessonSupabaseProgress()
-
 const currentStatus = ref<'not-started' | 'in-progress' | 'completed'>('not-started')
 const isCompleting = ref(false)
 
-// Marquer comme commencée au montage
 onMounted(async () => {
   currentStatus.value = await getLessonStatus(slug)
   if (currentStatus.value !== 'completed') {
@@ -45,7 +46,6 @@ onMounted(async () => {
   }
 })
 
-// Marquer comme complétée (guides uniquement)
 const markAsCompleted = async () => {
   isCompleting.value = true
   await completeLesson(slug)
@@ -53,190 +53,165 @@ const markAsCompleted = async () => {
   isCompleting.value = false
 }
 
-// Badge de difficulté
-const getDifficultyBadge = (difficulty: string) => {
-  switch (difficulty) {
-    case 'beginner':
-      return { label: 'Débutant', class: 'bg-nuxy-green/10 text-nuxy-green' }
-    case 'intermediate':
-      return { label: 'Intermédiaire', class: 'bg-nuxy-gold/10 text-nuxy-gold-dark' }
-    case 'advanced':
-      return { label: 'Avancé', class: 'bg-nuxy-pink/10 text-nuxy-pink' }
-    default:
-      return { label: difficulty, class: 'bg-gray-100 text-gray-600' }
-  }
+// Badge helpers
+const typeBadges: Record<string, { label: string; icon: string; class: string }> = {
+  guide: { label: 'Guide', icon: 'i-lucide-book-open', class: 'bg-nuxy-teal/10 text-nuxy-teal-dark dark:text-nuxy-teal' },
+  exercise: { label: 'Exercice', icon: 'i-lucide-code', class: 'bg-nuxy-green/10 text-nuxy-green-dark dark:text-nuxy-green' },
+  quiz: { label: 'Quiz', icon: 'i-lucide-brain', class: 'bg-nuxy-purple/10 text-nuxy-purple dark:text-nuxy-pink' },
+  project: { label: 'Projet', icon: 'i-lucide-folder-open', class: 'bg-nuxy-gold/10 text-nuxy-gold-dark' }
 }
 
-// Badge de type
-const getTypeBadge = (type: string) => {
-  switch (type) {
-    case 'guide':
-      return { label: 'Guide', icon: 'i-lucide-book-open', class: 'bg-nuxy-teal/10 text-nuxy-teal' }
-    case 'exercise':
-      return { label: 'Exercice', icon: 'i-lucide-code', class: 'bg-nuxy-green/10 text-nuxy-green' }
-    case 'quiz':
-      return { label: 'Quiz', icon: 'i-lucide-brain', class: 'bg-nuxy-purple/10 text-nuxy-purple dark:text-nuxy-pink' }
-    case 'project':
-      return { label: 'Projet', icon: 'i-lucide-folder-open', class: 'bg-nuxy-gold/10 text-nuxy-gold-dark' }
-    default:
-      return { label: type, icon: 'i-lucide-file', class: 'bg-gray-100 text-gray-600' }
-  }
+const difficultyBadges: Record<string, { label: string; class: string }> = {
+  beginner: { label: 'Débutant', class: 'bg-nuxy-green/10 text-nuxy-green-dark dark:text-nuxy-green' },
+  intermediate: { label: 'Intermédiaire', class: 'bg-nuxy-gold/10 text-nuxy-gold-dark' },
+  advanced: { label: 'Avancé', class: 'bg-nuxy-pink/10 text-nuxy-pink' }
 }
+
+const typeBadge = typeBadges[lesson.value.type] || typeBadges.guide
+const diffBadge = difficultyBadges[lesson.value.difficulty] || difficultyBadges.beginner
 </script>
 
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-950">
-    <!-- LessonHeader -->
+    <!-- Header -->
     <LessonsLessonHeader />
 
-    <!-- Loading -->
-    <div v-if="isLoading" class="flex items-center justify-center min-h-[60vh]">
-      <div class="text-center space-y-4">
-        <div class="w-12 h-12 border-4 border-nuxy-green border-t-transparent rounded-full animate-spin mx-auto" />
-        <p class="text-gray-500 dark:text-gray-400">Chargement de la leçon...</p>
+    <!-- Contenu principal -->
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <!-- Badges -->
+      <div class="flex flex-wrap items-center gap-2 mb-6">
+        <span
+          class="inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full"
+          :class="typeBadge.class"
+        >
+          <UIcon :name="typeBadge.icon" class="w-4 h-4" />
+          {{ typeBadge.label }}
+        </span>
+        <span
+          class="inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full"
+          :class="diffBadge.class"
+        >
+          {{ diffBadge.label }}
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+          <UIcon name="i-lucide-clock" class="w-4 h-4" />
+          {{ lesson.duration }} min
+        </span>
+        <span
+          v-if="currentStatus === 'completed'"
+          class="inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full bg-nuxy-green/10 text-nuxy-green"
+        >
+          <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
+          Complété
+        </span>
       </div>
-    </div>
 
-    <!-- Erreur -->
-    <div v-else-if="error || !lesson" class="flex items-center justify-center min-h-[60vh]">
-      <div class="text-center space-y-4 max-w-md px-4">
-        <UIcon name="i-lucide-file-x" class="w-16 h-16 text-gray-400 mx-auto" />
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Leçon introuvable</h2>
-        <p class="text-gray-500 dark:text-gray-400">
-          {{ error || 'Cette leçon n\'existe pas ou a été déplacée.' }}
-        </p>
-        <UButton to="/lessons" color="primary" variant="solid" icon="i-lucide-arrow-left">
-          Retour aux leçons
-        </UButton>
+      <!-- Titre -->
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        {{ lesson.title }}
+      </h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+        {{ lesson.description }}
+      </p>
+
+      <!-- Objectifs -->
+      <div
+        v-if="lesson.objectives?.length"
+        class="bg-nuxy-green/5 dark:bg-nuxy-green/10 border border-nuxy-green/20 rounded-xl p-5 mb-10"
+      >
+        <h2 class="text-sm font-semibold text-nuxy-green-dark dark:text-nuxy-green mb-3 flex items-center gap-2">
+          <UIcon name="i-lucide-target" class="w-4 h-4" />
+          Ce que tu vas apprendre
+        </h2>
+        <ul class="space-y-2">
+          <li
+            v-for="(obj, i) in lesson.objectives"
+            :key="i"
+            class="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300"
+          >
+            <UIcon name="i-lucide-check" class="w-4 h-4 text-nuxy-green mt-0.5 shrink-0" />
+            {{ obj }}
+          </li>
+        </ul>
       </div>
-    </div>
 
-    <!-- Contenu de la leçon -->
-    <template v-else>
-      <UContainer class="py-8 lg:py-12 max-w-3xl">
-        <!-- Métadonnées -->
-        <div class="mb-8 space-y-4">
-          <!-- Badges -->
-          <div class="flex flex-wrap items-center gap-2">
-            <!-- Type -->
-            <span
-              class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
-              :class="getTypeBadge(lesson.type).class"
-            >
-              <UIcon :name="getTypeBadge(lesson.type).icon" class="w-3.5 h-3.5" />
-              {{ getTypeBadge(lesson.type).label }}
-            </span>
-            <!-- Difficulté -->
-            <span
-              class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
-              :class="getDifficultyBadge(lesson.difficulty).class"
-            >
-              {{ getDifficultyBadge(lesson.difficulty).label }}
-            </span>
-            <!-- Durée -->
-            <span class="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 px-2.5 py-1">
-              <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
-              {{ lesson.duration }} min
-            </span>
-            <!-- Statut complété -->
-            <span
-              v-if="currentStatus === 'completed'"
-              class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-nuxy-green/10 text-nuxy-green"
-            >
-              <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
-              Complété
-            </span>
+      <!-- Contenu Markdown (h1 caché car déjà affiché au-dessus) -->
+      <div class="lesson-content prose prose-gray dark:prose-invert max-w-none
+        prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white
+        prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4
+        prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3
+        prose-p:text-base prose-p:leading-relaxed prose-p:text-gray-700 dark:prose-p:text-gray-300
+        prose-li:text-gray-700 dark:prose-li:text-gray-300
+        prose-strong:text-gray-900 dark:prose-strong:text-white
+        prose-code:text-nuxy-teal prose-code:bg-nuxy-teal/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+        prose-a:text-nuxy-green prose-a:no-underline hover:prose-a:underline
+        prose-table:text-sm
+      ">
+        <ContentRenderer v-if="lesson" :value="lesson" />
+      </div>
+
+      <!-- ==================== ACTIONS ==================== -->
+      <div class="mt-12 space-y-6">
+        <!-- Guide : bouton "J'ai compris" -->
+        <div v-if="lesson.type === 'guide'" class="flex justify-center">
+          <UButton
+            v-if="currentStatus !== 'completed'"
+            size="xl"
+            color="primary"
+            icon="i-lucide-check-circle"
+            :loading="isCompleting"
+            class="btn-cta px-8"
+            @click="markAsCompleted"
+          >
+            J'ai compris !
+          </UButton>
+          <div
+            v-else
+            class="inline-flex items-center gap-3 px-6 py-3 bg-nuxy-green/10 rounded-xl border border-nuxy-green/20"
+          >
+            <UIcon name="i-lucide-party-popper" class="w-6 h-6 text-nuxy-gold" />
+            <span class="font-medium text-nuxy-green">Bravo, leçon terminée !</span>
           </div>
+        </div>
 
-          <!-- Titre et description -->
+        <!-- Exercise : checklist -->
+        <LessonsLessonChecklist
+          v-if="lesson.type === 'exercise' && lesson.checklist?.length"
+          :items="lesson.checklist"
+          :slug="slug"
+        />
+
+        <!-- Quiz -->
+        <LessonsLessonQuiz
+          v-if="lesson.type === 'quiz' && lesson.quiz?.length"
+          :questions="lesson.quiz"
+          :slug="slug"
+        />
+
+        <!-- Project -->
+        <div
+          v-if="lesson.type === 'project'"
+          class="flex items-center gap-3 p-4 bg-nuxy-gold/10 border border-nuxy-gold/20 rounded-xl"
+        >
+          <UIcon name="i-lucide-hourglass" class="w-6 h-6 text-nuxy-gold-dark" />
           <div>
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3">
-              {{ lesson.title }}
-            </h1>
-            <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400">
-              {{ lesson.description }}
+            <p class="font-medium text-gray-900 dark:text-white">En attente de validation</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Ton enseignant vérifiera ton projet. En attendant, passe à la leçon suivante !
             </p>
           </div>
-
-          <!-- Objectifs -->
-          <div v-if="lesson.objectives && lesson.objectives.length > 0" class="bg-nuxy-green/5 dark:bg-nuxy-green/10 border border-nuxy-green/20 rounded-xl p-4">
-            <h2 class="text-sm font-semibold text-nuxy-green-dark dark:text-nuxy-green mb-2 flex items-center gap-2">
-              <UIcon name="i-lucide-target" class="w-4 h-4" />
-              Ce que tu vas apprendre
-            </h2>
-            <ul class="space-y-1.5">
-              <li
-                v-for="(objective, i) in lesson.objectives"
-                :key="i"
-                class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300"
-              >
-                <UIcon name="i-lucide-check" class="w-4 h-4 text-nuxy-green mt-0.5 shrink-0" />
-                {{ objective }}
-              </li>
-            </ul>
-          </div>
         </div>
+      </div>
 
-        <!-- Contenu Markdown -->
-        <LessonsLessonContent :lesson="lesson" />
-
-        <!-- Actions selon le type -->
-        <div class="mt-10 space-y-6">
-          <!-- Guide : bouton "J'ai compris" -->
-          <div v-if="lesson.type === 'guide'" class="flex justify-center">
-            <UButton
-              v-if="currentStatus !== 'completed'"
-              size="xl"
-              color="primary"
-              variant="solid"
-              icon="i-lucide-check-circle"
-              :loading="isCompleting"
-              class="btn-cta"
-              @click="markAsCompleted"
-            >
-              J'ai compris !
-            </UButton>
-            <div
-              v-else
-              class="flex items-center gap-3 px-6 py-3 bg-nuxy-green/10 dark:bg-nuxy-green/5 rounded-xl border border-nuxy-green/20"
-            >
-              <UIcon name="i-lucide-party-popper" class="w-6 h-6 text-nuxy-gold" />
-              <span class="font-medium text-nuxy-green">Bravo, leçon terminée !</span>
-            </div>
-          </div>
-
-          <!-- Exercise : checklist -->
-          <LessonsLessonChecklist
-            v-if="lesson.type === 'exercise' && lesson.objectives"
-            :items="lesson.objectives.map((obj: string, i: number) => ({ id: `obj-${i}`, label: obj }))"
-            :slug="slug"
-          />
-
-          <!-- Quiz : composant quiz -->
-          <LessonsLessonQuiz
-            v-if="lesson.type === 'quiz' && lesson.quiz"
-            :questions="lesson.quiz"
-            :slug="slug"
-          />
-
-          <!-- Project : message d'attente -->
-          <div
-            v-if="lesson.type === 'project'"
-            class="flex items-center gap-3 p-4 bg-nuxy-gold/10 border border-nuxy-gold/20 rounded-xl"
-          >
-            <UIcon name="i-lucide-hourglass" class="w-6 h-6 text-nuxy-gold-dark" />
-            <div>
-              <p class="font-medium text-gray-900 dark:text-white">En attente de validation</p>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Ton enseignant vérifiera ton projet. En attendant, passe à la leçon suivante !
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Navigation -->
-        <LessonsLessonNavigation :current-slug="slug" />
-      </UContainer>
-    </template>
+      <!-- Navigation -->
+      <LessonsLessonNavigation :current-slug="slug" />
+    </div>
   </div>
 </template>
+
+<style scoped>
+/* Cacher le h1 dans le contenu markdown (déjà affiché dans les métadonnées) */
+.lesson-content :deep(h1:first-child) {
+  display: none;
+}
+</style>
