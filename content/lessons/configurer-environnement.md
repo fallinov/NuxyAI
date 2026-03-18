@@ -78,12 +78,12 @@ messages:
 
 Tu veux voir tes hooks existants ? Utilise `/hooks` :
 
-::terminal-block
+```bash
 > /hooks
 
 Hooks configurés :
   post-edit: eslint --fix (actif)
-::
+```
 
 Quelques idées de hooks utiles :
 - **Lint après chaque edit** — pour garder un code propre en permanence
@@ -96,17 +96,17 @@ Les skills sont des fichiers `SKILL.md` placés dans `.claude/skills/`. Ils donn
 
 Explore les skills disponibles avec `/skills` :
 
-::terminal-block
+```bash
 > /skills
 
 Skills disponibles :
   api-conventions — Conventions pour les endpoints API
   db-migrations   — Règles pour les migrations de base de données
-::
+```
 
 Un skill, c'est juste un fichier Markdown avec des instructions :
 
-::terminal-block
+```bash
 # .claude/skills/api-conventions/SKILL.md
 
 ## Conventions API
@@ -115,7 +115,7 @@ Un skill, c'est juste un fichier Markdown avec des instructions :
 - Format de réponse : { data, error, meta }
 - Authentification via Bearer token
 - Pagination : ?page=1&limit=20
-::
+```
 
 Quand tu travailles sur une API, Claude consultera automatiquement ce skill pour respecter tes conventions.
 

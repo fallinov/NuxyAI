@@ -79,7 +79,7 @@ La règle d'or : **chaque ligne doit empêcher Claude de faire une erreur**. Si 
 
 Voici un CLAUDE.md court et efficace :
 
-::terminal-block
+```bash
 # Mon Projet
 
 ## Commandes
@@ -99,7 +99,7 @@ Voici un CLAUDE.md court et efficace :
 ## Pièges
 - `useSupabaseClient()` accède au mauvais schéma — utiliser `useNuxyDb()`
 - Les polices sont self-hosted, jamais de CDN externe
-::
+```
 
 Remarque les mots **IMPORTANT** et **YOU MUST**. Quand une règle est critique et que Claude a tendance à l'oublier, ces mots renforcent l'instruction.
 
@@ -119,13 +119,13 @@ Claude les lit tous, du plus global au plus local. Un CLAUDE.md dans un sous-dos
 
 Tu as déjà un README.md avec des infos utiles ? Pas besoin de tout recopier. Utilise la syntaxe `@import` :
 
-::terminal-block
+```bash
 # CLAUDE.md
 
 @README.md
 @docs/git-instructions.md
 @docs/api-conventions.md
-::
+```
 
 Claude lira ces fichiers comme s'ils faisaient partie du CLAUDE.md.
 
@@ -133,10 +133,10 @@ Claude lira ces fichiers comme s'ils faisaient partie du CLAUDE.md.
 
 Un CLAUDE.md, ça se versionne. Ajoute-le dans Git :
 
-::terminal-block
+```bash
 git add CLAUDE.md
 git commit -m "Ajouter le CLAUDE.md du projet"
-::
+```
 
 Comme ça, toute l'équipe utilise les mêmes instructions. Fini le « chez moi ça marche ».
 

@@ -46,14 +46,17 @@ Tu vois Claude partir dans une direction qui ne te plaît pas ? Il commence à m
 Esc arrête Claude immédiatement. Le contexte de la conversation est préservé — tu peux rediriger tout de suite :
 
 ::ai-conversation
-user: Refactorise le fichier utils.ts pour séparer les fonctions de validation.
-assistant: Je vais refactoriser utils.ts. Je commence par...
-
-[Tu appuies sur Esc parce que Claude commence à modifier le mauvais fichier.]
-user: Stop. Je parlais de src/utils.ts, pas de lib/utils.ts. Reprends avec le bon fichier.
-assistant: Pardon ! Je reprends avec src/utils.ts.
-
-[Claude modifie le bon fichier cette fois.]
+---
+messages:
+  - role: user
+    content: "Refactorise le fichier utils.ts pour séparer les fonctions de validation."
+  - role: assistant
+    content: "Je vais refactoriser utils.ts. Je commence par...\n\n[Tu appuies sur Esc parce que Claude commence à modifier le mauvais fichier.]"
+  - role: user
+    content: "Stop. Je parlais de src/utils.ts, pas de lib/utils.ts. Reprends avec le bon fichier."
+  - role: assistant
+    content: "Pardon ! Je reprends avec src/utils.ts.\n\n[Claude modifie le bon fichier cette fois.]"
+---
 ::
 
 Le réflexe Esc, c'est comme le Ctrl+Z du développeur. N'hésite jamais à l'utiliser.
@@ -63,8 +66,13 @@ Le réflexe Esc, c'est comme le Ctrl+Z du développeur. N'hésite jamais à l'ut
 Claude vient de modifier un fichier et le résultat ne te convient pas ? Dis-lui simplement :
 
 ::ai-conversation
-user: Undo that
-assistant: J'annule les modifications. Les fichiers ont été restaurés à leur état précédent.
+---
+messages:
+  - role: user
+    content: "Undo that"
+  - role: assistant
+    content: "J'annule les modifications. Les fichiers ont été restaurés à leur état précédent."
+---
 ::
 
 C'est simple, direct, efficace. Claude remet les fichiers comme ils étaient avant sa dernière action.
@@ -78,8 +86,13 @@ Tape `/rewind` (ou appuie deux fois sur Esc) pour ouvrir le menu de rembobinage.
 C'est comme un checkpoint dans un jeu vidéo. Tu reviens à un moment où tout allait bien, et tu repars de là.
 
 ::ai-conversation
-user: /rewind
-assistant: [Claude affiche les points de la conversation auxquels tu peux revenir.]
+---
+messages:
+  - role: user
+    content: "/rewind"
+  - role: assistant
+    content: "[Claude affiche les points de la conversation auxquels tu peux revenir.]"
+---
 ::
 
 Choisis le point où tout allait encore bien, et repars avec un meilleur prompt.
@@ -90,9 +103,9 @@ Après plusieurs allers-retours, le contexte de la conversation peut devenir **p
 
 La solution : `/clear`.
 
-::terminal-block
+```bash
 /clear
-::
+```
 
 Cette commande efface tout l'historique de la conversation. Claude repart de zéro (mais il relit ton CLAUDE.md). C'est un nouveau départ propre.
 

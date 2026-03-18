@@ -42,18 +42,18 @@ Bonne nouvelle : Claude Code est excellent pour explorer du code. Il peut lire l
 
 On va s'entraîner sur un vrai projet open source. On prend un projet simple — une app de tâches (todo app) en Node.js.
 
-::terminal-block
+```bash
 git clone https://github.com/tastejs/todomvc.git
 cd todomvc
-::
+```
 
 Tu te retrouves avec plein de fichiers. Pas de panique, c'est normal. On ne va pas tout lire — on va demander à Claude.
 
 Lance Claude Code dans le dossier du projet :
 
-::terminal-block
+```bash
 claude
-::
+```
 
 ## Étape 2 : Demander un aperçu
 

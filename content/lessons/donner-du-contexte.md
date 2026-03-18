@@ -41,17 +41,25 @@ Tu sais écrire un bon prompt. Mais parfois, les mots ne suffisent pas. Claude a
 Le symbole `@` suivi d'un chemin de fichier dit à Claude : "Lis ce fichier". C'est la façon la plus directe de lui montrer ton code.
 
 ::ai-conversation
-user: @src/auth.ts — Pourquoi la fonction login ne gère pas le cas où le mot de passe est vide ?
-assistant: En regardant src/auth.ts, je vois que la fonction login vérifie uniquement que l'email est valide, mais il n'y a aucune vérification sur le mot de passe.
-
-[Claude propose d'ajouter une validation du mot de passe avant l'appel à l'API.]
+---
+messages:
+  - role: user
+    content: "@src/auth.ts — Pourquoi la fonction login ne gère pas le cas où le mot de passe est vide ?"
+  - role: assistant
+    content: "En regardant src/auth.ts, je vois que la fonction login vérifie uniquement que l'email est valide, mais il n'y a aucune vérification sur le mot de passe.\n\n[Claude propose d'ajouter une validation du mot de passe avant l'appel à l'API.]"
+---
 ::
 
 Tu peux aussi référencer des dossiers entiers :
 
 ::ai-conversation
-user: @src/components/ — Donne-moi un aperçu de l'architecture des composants.
-assistant: Le dossier contient 12 composants organisés en 3 sous-dossiers : auth/, layout/ et shared/. Voici la structure...
+---
+messages:
+  - role: user
+    content: "@src/components/ — Donne-moi un aperçu de l'architecture des composants."
+  - role: assistant
+    content: "Le dossier contient 12 composants organisés en 3 sous-dossiers : auth/, layout/ et shared/. Voici la structure..."
+---
 ::
 
 L'autocomplétion t'aide : tape `@` puis commence à écrire le chemin, Claude te propose les fichiers disponibles.
@@ -70,27 +78,30 @@ C'est super utile pour :
 - Comparer le résultat avec le design attendu
 
 ::ai-conversation
-user: [colle un screenshot d'une page avec un bouton mal aligné] Le bouton "Envoyer" devrait être centré sous le formulaire. Corrige le CSS.
-assistant: Je vois le problème sur le screenshot. Le bouton utilise float: left au lieu d'être centré.
-
-[Claude modifie le CSS pour centrer le bouton avec flexbox.]
+---
+messages:
+  - role: user
+    content: "[colle un screenshot d'une page avec un bouton mal aligné] Le bouton \"Envoyer\" devrait être centré sous le formulaire. Corrige le CSS."
+  - role: assistant
+    content: "Je vois le problème sur le screenshot. Le bouton utilise float: left au lieu d'être centré.\n\n[Claude modifie le CSS pour centrer le bouton avec flexbox.]"
+---
 ::
 
 ## Envoyer des données via pipe
 
 Tu peux envoyer le contenu d'un fichier ou d'une commande directement à Claude avec le pipe (`|`). C'est pratique pour les logs, les erreurs ou les grosses sorties de commande.
 
-::terminal-block
+```bash
 cat error.log | claude "Explique cette erreur et propose une solution"
-::
+```
 
-::terminal-block
+```bash
 npm test 2>&1 | claude "3 tests échouent, explique pourquoi et corrige"
-::
+```
 
-::terminal-block
+```bash
 git diff | claude "Résume les changements de ce diff"
-::
+```
 
 Le pipe est parfait quand tu as une sortie de commande longue que tu ne veux pas copier-coller manuellement.
 
@@ -99,8 +110,13 @@ Le pipe est parfait quand tu as une sortie de commande longue que tu ne veux pas
 Tu peux coller des URLs de documentation directement dans ton prompt. Claude ira lire la page pour toi.
 
 ::ai-conversation
-user: D'après https://nuxt.com/docs/api/configuration/nuxt-config, comment configurer le SSR dans nuxt.config.ts ?
-assistant: D'après la documentation Nuxt, tu peux configurer le SSR avec l'option ssr: true ou ssr: false dans ton nuxt.config.ts...
+---
+messages:
+  - role: user
+    content: "D'après https://nuxt.com/docs/api/configuration/nuxt-config, comment configurer le SSR dans nuxt.config.ts ?"
+  - role: assistant
+    content: "D'après la documentation Nuxt, tu peux configurer le SSR avec l'option ssr: true ou ssr: false dans ton nuxt.config.ts..."
+---
 ::
 
 C'est utile quand tu travailles avec une librairie et que tu veux que Claude suive la doc officielle plutôt que d'inventer.
@@ -148,12 +164,13 @@ Les choses que Claude ne peut **pas deviner** en lisant le code :
 Ouvre un projet (ou ton dossier de test) et essaie :
 
 ::ai-conversation
-user: Crée un fichier CLAUDE.md à la racine avec les commandes de build et de test du projet, et la convention que le code doit être en TypeScript.
-assistant: Je crée le fichier CLAUDE.md avec les informations du projet.
-
-[Claude crée le fichier avec les commandes npm, les conventions TypeScript et la structure du projet.]
-
-Le fichier CLAUDE.md est créé. À chaque nouvelle session, je lirai automatiquement ce fichier pour connaître tes règles.
+---
+messages:
+  - role: user
+    content: "Crée un fichier CLAUDE.md à la racine avec les commandes de build et de test du projet, et la convention que le code doit être en TypeScript."
+  - role: assistant
+    content: "Je crée le fichier CLAUDE.md avec les informations du projet.\n\n[Claude crée le fichier avec les commandes npm, les conventions TypeScript et la structure du projet.]\n\nLe fichier CLAUDE.md est créé. À chaque nouvelle session, je lirai automatiquement ce fichier pour connaître tes règles."
+---
 ::
 
 Tu peux aussi le créer à la main dans ton éditeur. L'important c'est qu'il soit à la racine du projet.

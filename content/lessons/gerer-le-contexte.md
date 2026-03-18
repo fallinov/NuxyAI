@@ -44,11 +44,11 @@ C'est LA ressource à gérer. Pas le temps. Pas la puissance. Le **contexte**.
 
 Quand tu passes d'une tâche à une autre — par exemple du CSS à un bug d'API — tape `/clear`. C'est comme nettoyer le bureau de Claude pour repartir à zéro.
 
-::terminal-block
+```bash
 > /clear
 
 Contexte vidé. Nouvelle conversation.
-::
+```
 
 **La règle** : entre deux tâches non liées, toujours `/clear`. C'est l'habitude la plus importante à prendre avec Claude Code.
 
@@ -56,11 +56,11 @@ Contexte vidé. Nouvelle conversation.
 
 Parfois tu veux garder le fil de la conversation, mais elle commence à être longue. `/compact` résume tout pour libérer de l'espace :
 
-::terminal-block
+```bash
 > /compact
 
 Conversation résumée. Contexte libéré.
-::
+```
 
 Tu peux même guider le résumé :
 
@@ -101,25 +101,25 @@ Utilise les sous-agents pour :
 
 Tu fermes le terminal et tu reviens le lendemain ? Pas de panique. Claude garde tes sessions.
 
-::terminal-block
+```bash
 claude --continue
-::
+```
 
 Cette commande reprend ta **dernière conversation** dans le dossier courant. Pratique pour continuer là où tu en étais.
 
 Tu veux choisir une session plus ancienne ?
 
-::terminal-block
+```bash
 claude --resume
-::
+```
 
 Claude te montre la liste de tes sessions récentes et tu choisis laquelle reprendre.
 
 Et pour nommer une session en cours (pour la retrouver facilement) :
 
-::terminal-block
+```bash
 > /rename refactoring-api-auth
-::
+```
 
 ## Les erreurs classiques
 

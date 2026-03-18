@@ -44,21 +44,22 @@ C'est comme commander au restaurant : "un truc à manger" vs "un burger saignant
 
 Ouvre ton terminal dans un dossier de projet (ou crée un dossier vide pour tester) et lance Claude Code :
 
-::terminal-block
+```bash
 mkdir mon-premier-projet
 cd mon-premier-projet
 claude
-::
+```
 
 Maintenant, essaie ce premier prompt :
 
 ::ai-conversation
-user: Crée un fichier index.html avec une page web simple qui affiche "Hello World" en gros et un paragraphe de bienvenue.
-assistant: Je vais créer ce fichier pour toi.
-
-[Claude crée le fichier index.html avec le HTML, un titre h1 "Hello World" et un paragraphe de bienvenue, le tout avec un style CSS minimal.]
-
-Le fichier `index.html` a été créé. Tu peux l'ouvrir dans ton navigateur pour voir le résultat.
+---
+messages:
+  - role: user
+    content: "Crée un fichier index.html avec une page web simple qui affiche \"Hello World\" en gros et un paragraphe de bienvenue."
+  - role: assistant
+    content: "Je vais créer ce fichier pour toi.\n\n[Claude crée le fichier index.html avec le HTML, un titre h1 \"Hello World\" et un paragraphe de bienvenue, le tout avec un style CSS minimal.]\n\nLe fichier `index.html` a été créé. Tu peux l'ouvrir dans ton navigateur pour voir le résultat."
+---
 ::
 
 Ouvre le fichier dans ton navigateur pour voir le résultat. Pas mal pour une première demande, non ?
@@ -74,12 +75,13 @@ Quand Claude te répond, prends le temps de **lire ce qu'il a fait**. Ne te cont
 Si quelque chose n'est pas clair, demande-lui :
 
 ::ai-conversation
-user: Explique-moi la ligne avec <meta charset="UTF-8">, c'est quoi exactement ?
-assistant: La balise `<meta charset="UTF-8">` indique au navigateur quel encodage de caractères utiliser pour afficher la page.
-
-**UTF-8** est l'encodage le plus courant. Il permet d'afficher correctement les accents (é, è, ê), les emojis et les caractères spéciaux de toutes les langues.
-
-Sans cette ligne, tu pourrais voir des caractères bizarres à la place des accents — par exemple "Ã©" au lieu de "é".
+---
+messages:
+  - role: user
+    content: "Explique-moi la ligne avec <meta charset=\"UTF-8\">, c'est quoi exactement ?"
+  - role: assistant
+    content: "La balise `<meta charset=\"UTF-8\">` indique au navigateur quel encodage de caractères utiliser pour afficher la page.\n\n**UTF-8** est l'encodage le plus courant. Il permet d'afficher correctement les accents (é, è, ê), les emojis et les caractères spéciaux de toutes les langues.\n\nSans cette ligne, tu pourrais voir des caractères bizarres à la place des accents — par exemple \"Ã©\" au lieu de \"é\"."
+---
 ::
 
 Tu vois ? Il suffit de demander. Claude est là pour ça.
@@ -91,15 +93,25 @@ La vraie puissance de l'IA, c'est l'**itération**. Tu obtiens un premier résul
 Essaie d'enchaîner avec ces demandes :
 
 ::ai-conversation
-user: Ajoute un bouton qui change la couleur du fond quand on clique dessus.
-assistant: [Claude modifie le fichier pour ajouter un bouton avec un événement JavaScript qui change la couleur de fond aléatoirement à chaque clic.]
+---
+messages:
+  - role: user
+    content: "Ajoute un bouton qui change la couleur du fond quand on clique dessus."
+  - role: assistant
+    content: "[Claude modifie le fichier pour ajouter un bouton avec un événement JavaScript qui change la couleur de fond aléatoirement à chaque clic.]"
+---
 ::
 
 Puis affine encore :
 
 ::ai-conversation
-user: Fais en sorte que le bouton alterne entre 3 couleurs précises : bleu clair, vert menthe et lavande.
-assistant: [Claude modifie le JavaScript pour faire alterner entre les 3 couleurs demandées avec un compteur.]
+---
+messages:
+  - role: user
+    content: "Fais en sorte que le bouton alterne entre 3 couleurs précises : bleu clair, vert menthe et lavande."
+  - role: assistant
+    content: "[Claude modifie le JavaScript pour faire alterner entre les 3 couleurs demandées avec un compteur.]"
+---
 ::
 
 Tu vois le principe ? Chaque prompt précise un peu plus ce que tu veux. C'est comme ça qu'on travaille avec l'IA.
@@ -135,17 +147,17 @@ Si le résultat est à 80% de ce que tu veux, demande juste les 20% manquants. P
 
 Claude Code travaille directement avec tes fichiers. Quand il crée ou modifie du code, c'est fait sur ton disque. Mais c'est une bonne habitude de vérifier :
 
-::terminal-block
+```bash
 ls -la
-::
+```
 
 Tu devrais voir le fichier `index.html` que Claude a créé. Ouvre-le, vérifie que tout est là, et fais un commit si tu utilises Git :
 
-::terminal-block
+```bash
 git init
 git add index.html
 git commit -m "Premier fichier créé avec Claude Code"
-::
+```
 
 ## Ce qu'on retient
 

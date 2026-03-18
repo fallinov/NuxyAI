@@ -32,19 +32,25 @@ Tu sais déjà écrire un prompt. Mais est-ce que tu écris de **bons** prompts 
 Regarde ces deux échanges. Même intention, résultats très différents.
 
 ::ai-conversation
-user: fix the bug
-assistant: Je ne vois pas de bug évident dans le code. Pourrais-tu me donner plus de détails sur l'erreur que tu rencontres ?
+---
+messages:
+  - role: user
+    content: "fix the bug"
+  - role: assistant
+    content: "Je ne vois pas de bug évident dans le code. Pourrais-tu me donner plus de détails sur l'erreur que tu rencontres ?"
+---
 ::
 
 Pas terrible, hein ? Claude ne sait pas de quoi tu parles. Maintenant :
 
 ::ai-conversation
-user: Le build échoue avec l'erreur "Cannot find module './utils'" dans src/app.ts ligne 3. Le fichier utils.ts existe dans le même dossier. Corrige l'import et vérifie que le build passe.
-assistant: Je vois le problème. L'import utilise un chemin relatif incorrect. Je corrige l'import dans src/app.ts et je lance le build pour vérifier.
-
-[Claude modifie l'import et lance le build avec succès.]
-
-Le build passe maintenant. Le problème était un import sans extension — TypeScript avait besoin du chemin exact.
+---
+messages:
+  - role: user
+    content: "Le build échoue avec l'erreur \"Cannot find module './utils'\" dans src/app.ts ligne 3. Le fichier utils.ts existe dans le même dossier. Corrige l'import et vérifie que le build passe."
+  - role: assistant
+    content: "Je vois le problème. L'import utilise un chemin relatif incorrect. Je corrige l'import dans src/app.ts et je lance le build pour vérifier.\n\n[Claude modifie l'import et lance le build avec succès.]\n\nLe build passe maintenant. Le problème était un import sans extension — TypeScript avait besoin du chemin exact."
+---
 ::
 
 Tu vois la différence ? Plus tu donnes d'infos, plus Claude est efficace.
@@ -77,32 +83,37 @@ Voici des prompts vagues transformés en prompts efficaces :
 ### Exemple 1 : Demande de code
 
 ::ai-conversation
-user: Crée une fonction validateEmail dans utils/validation.ts qui vérifie qu'un email contient un @ et un domaine valide. Retourne un objet { valid: boolean, error?: string }. Écris aussi le test unitaire.
-assistant: Je crée la fonction et son test.
-
-[Claude crée utils/validation.ts avec la fonction validateEmail et utils/validation.test.ts avec les cas de test : email valide, sans @, domaine vide, format invalide.]
-
-Les deux fichiers sont créés. Lance `npm test` pour vérifier que les tests passent.
+---
+messages:
+  - role: user
+    content: "Crée une fonction validateEmail dans utils/validation.ts qui vérifie qu'un email contient un @ et un domaine valide. Retourne un objet { valid: boolean, error?: string }. Écris aussi le test unitaire."
+  - role: assistant
+    content: "Je crée la fonction et son test.\n\n[Claude crée utils/validation.ts avec la fonction validateEmail et utils/validation.test.ts avec les cas de test : email valide, sans @, domaine vide, format invalide.]\n\nLes deux fichiers sont créés. Lance `npm test` pour vérifier que les tests passent."
+---
 ::
 
 ### Exemple 2 : Débogage
 
 ::ai-conversation
-user: La page /profile affiche une erreur 500 en production mais fonctionne en dev. Le log serveur dit "NEXT_PUBLIC_API_URL is undefined". Trouve d'où vient le problème et corrige-le.
-assistant: Le problème vient de la variable d'environnement NEXT_PUBLIC_API_URL qui n'est pas définie dans l'environnement de production.
-
-[Claude vérifie le fichier .env.example, identifie la variable manquante, et explique comment la configurer sur le serveur de production.]
+---
+messages:
+  - role: user
+    content: "La page /profile affiche une erreur 500 en production mais fonctionne en dev. Le log serveur dit \"NEXT_PUBLIC_API_URL is undefined\". Trouve d'où vient le problème et corrige-le."
+  - role: assistant
+    content: "Le problème vient de la variable d'environnement NEXT_PUBLIC_API_URL qui n'est pas définie dans l'environnement de production.\n\n[Claude vérifie le fichier .env.example, identifie la variable manquante, et explique comment la configurer sur le serveur de production.]"
+---
 ::
 
 ### Exemple 3 : Refactoring
 
 ::ai-conversation
-user: Le fichier src/api/users.ts fait 400 lignes. Sépare-le en 3 fichiers logiques : users.queries.ts pour les requêtes DB, users.validators.ts pour les validations, et users.routes.ts pour les routes. Garde les mêmes exports publics.
-assistant: Je vais refactoriser ce fichier en 3 modules tout en gardant la même API publique.
-
-[Claude découpe le fichier, crée les 3 nouveaux fichiers et met à jour les imports dans le reste du projet.]
-
-Le refactoring est fait. Les 3 fichiers sont créés et tous les imports dans le projet ont été mis à jour. Lance les tests pour vérifier que rien n'est cassé.
+---
+messages:
+  - role: user
+    content: "Le fichier src/api/users.ts fait 400 lignes. Sépare-le en 3 fichiers logiques : users.queries.ts pour les requêtes DB, users.validators.ts pour les validations, et users.routes.ts pour les routes. Garde les mêmes exports publics."
+  - role: assistant
+    content: "Je vais refactoriser ce fichier en 3 modules tout en gardant la même API publique.\n\n[Claude découpe le fichier, crée les 3 nouveaux fichiers et met à jour les imports dans le reste du projet.]\n\nLe refactoring est fait. Les 3 fichiers sont créés et tous les imports dans le projet ont été mis à jour. Lance les tests pour vérifier que rien n'est cassé."
+---
 ::
 
 ## Quand un prompt vague est OK

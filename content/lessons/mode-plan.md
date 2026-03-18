@@ -63,19 +63,13 @@ Essaie maintenant. Ouvre Claude Code dans un projet et appuie sur Shift+Tab. Tu 
 Commence par comprendre le code existant. Active le mode Plan et pose des questions :
 
 ::ai-conversation
-user: [Mode Plan] Comment fonctionne le système d'authentification dans ce projet ? Quels fichiers sont impliqués ?
-assistant: Voici comment l'authentification fonctionne dans ce projet :
-
-1. **src/auth/login.ts** — Gère la connexion avec email/mot de passe
-2. **src/auth/middleware.ts** — Vérifie le token JWT sur chaque requête
-3. **src/auth/session.ts** — Gère les sessions utilisateur dans Redis
-
-Le flux est : formulaire → login.ts → API Supabase → stockage du token → middleware vérifie à chaque requête.
-
-Points importants :
-- Les tokens expirent après 1h
-- Le refresh token est stocké dans un cookie httpOnly
-- Pas de gestion du "Se souvenir de moi"
+---
+messages:
+  - role: user
+    content: "[Mode Plan] Comment fonctionne le système d'authentification dans ce projet ? Quels fichiers sont impliqués ?"
+  - role: assistant
+    content: "Voici comment l'authentification fonctionne dans ce projet :\n\n1. **src/auth/login.ts** — Gère la connexion avec email/mot de passe\n2. **src/auth/middleware.ts** — Vérifie le token JWT sur chaque requête\n3. **src/auth/session.ts** — Gère les sessions utilisateur dans Redis\n\nLe flux est : formulaire → login.ts → API Supabase → stockage du token → middleware vérifie à chaque requête.\n\nPoints importants :\n- Les tokens expirent après 1h\n- Le refresh token est stocké dans un cookie httpOnly\n- Pas de gestion du \"Se souvenir de moi\""
+---
 ::
 
 Tu vois ? Claude a lu le code et t'a résumé le tout. Aucun fichier n'a été modifié.
@@ -85,28 +79,13 @@ Tu vois ? Claude a lu le code et t'a résumé le tout. Aucun fichier n'a été m
 Maintenant que tu comprends le code, demande un plan :
 
 ::ai-conversation
-user: [Mode Plan] Je veux ajouter une option "Se souvenir de moi" qui garde la session pendant 30 jours. Fais-moi un plan d'implémentation.
-assistant: Voici le plan pour implémenter "Se souvenir de moi" :
-
-1. **src/auth/login.ts** — Ajouter un paramètre `rememberMe: boolean`
-   - Si true : token avec expiration 30 jours
-   - Si false : garder l'expiration actuelle (1h)
-
-2. **src/auth/session.ts** — Adapter la durée du cookie
-   - Cookie persistent si rememberMe = true
-   - Cookie de session si rememberMe = false
-
-3. **src/components/LoginForm.vue** — Ajouter la checkbox
-   - Checkbox "Se souvenir de moi" sous le champ mot de passe
-   - Passer la valeur au appel login()
-
-4. **Tests** — 2 nouveaux tests dans auth.test.ts
-   - Test avec rememberMe = true (vérifier l'expiration longue)
-   - Test avec rememberMe = false (vérifier l'expiration courte)
-
-Estimation : 4 fichiers modifiés, ~50 lignes ajoutées.
-
-Tu veux que j'implémente ce plan ?
+---
+messages:
+  - role: user
+    content: "[Mode Plan] Je veux ajouter une option \"Se souvenir de moi\" qui garde la session pendant 30 jours. Fais-moi un plan d'implémentation."
+  - role: assistant
+    content: "Voici le plan pour implémenter \"Se souvenir de moi\" :\n\n1. **src/auth/login.ts** — Ajouter un paramètre `rememberMe: boolean`\n   - Si true : token avec expiration 30 jours\n   - Si false : garder l'expiration actuelle (1h)\n\n2. **src/auth/session.ts** — Adapter la durée du cookie\n   - Cookie persistent si rememberMe = true\n   - Cookie de session si rememberMe = false\n\n3. **src/components/LoginForm.vue** — Ajouter la checkbox\n   - Checkbox \"Se souvenir de moi\" sous le champ mot de passe\n   - Passer la valeur au appel login()\n\n4. **Tests** — 2 nouveaux tests dans auth.test.ts\n   - Test avec rememberMe = true (vérifier l'expiration longue)\n   - Test avec rememberMe = false (vérifier l'expiration courte)\n\nEstimation : 4 fichiers modifiés, ~50 lignes ajoutées.\n\nTu veux que j'implémente ce plan ?"
+---
 ::
 
 Tu as un plan clair. Tu sais exactement ce qui va être modifié et pourquoi.
@@ -116,25 +95,31 @@ Tu as un plan clair. Tu sais exactement ce qui va être modifié et pourquoi.
 Bascule en mode Normal (Shift+Tab) et demande l'implémentation :
 
 ::ai-conversation
-user: [Mode Normal] Implémente le plan qu'on vient de définir pour "Se souvenir de moi".
-assistant: J'implémente le plan étape par étape.
-
-[Claude modifie login.ts, session.ts, LoginForm.vue et crée les tests dans auth.test.ts.]
-
-Tout est implémenté. 4 fichiers modifiés, 2 tests ajoutés. Lance `npm test` pour vérifier.
+---
+messages:
+  - role: user
+    content: "[Mode Normal] Implémente le plan qu'on vient de définir pour \"Se souvenir de moi\"."
+  - role: assistant
+    content: "J'implémente le plan étape par étape.\n\n[Claude modifie login.ts, session.ts, LoginForm.vue et crée les tests dans auth.test.ts.]\n\nTout est implémenté. 4 fichiers modifiés, 2 tests ajoutés. Lance `npm test` pour vérifier."
+---
 ::
 
 ### Étape 4 : Commiter
 
 Vérifie le résultat, lance les tests, puis commite :
 
-::terminal-block
+```bash
 npm test
-::
+```
 
 ::ai-conversation
-user: Les tests passent. Commite avec le message "Ajouter option Se souvenir de moi sur le login".
-assistant: [Claude crée le commit avec les 4 fichiers modifiés.]
+---
+messages:
+  - role: user
+    content: "Les tests passent. Commite avec le message \"Ajouter option Se souvenir de moi sur le login\"."
+  - role: assistant
+    content: "[Claude crée le commit avec les 4 fichiers modifiés.]"
+---
 ::
 
 ## Quand utiliser le mode Plan ?

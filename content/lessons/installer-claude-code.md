@@ -44,9 +44,9 @@ Claude Code est un outil **npm** (Node Package Manager). Pour l'utiliser, tu as 
 
 Ouvre ton terminal et tape :
 
-::terminal-block
+```bash
 node --version
-::
+```
 
 Si tu vois quelque chose comme `v20.11.0` ou plus, c'est bon — passe à l'étape 2.
 
@@ -57,18 +57,18 @@ Rends-toi sur [nodejs.org](https://nodejs.org) et télécharge la version **LTS*
 - **Windows** : télécharge le `.msi` et suis l'installateur
 - **macOS** : télécharge le `.pkg` ou utilise Homebrew :
 
-::terminal-block
+```bash
 brew install node
-::
+```
 
 - **Linux** : utilise ton gestionnaire de paquets ou [nvm](https://github.com/nvm-sh/nvm)
 
 Après l'installation, ferme et rouvre ton terminal, puis vérifie :
 
-::terminal-block
+```bash
 node --version
 npm --version
-::
+```
 
 Tu devrais voir les numéros de version des deux. Si c'est le cas, bravo — Node.js est prêt.
 
@@ -76,9 +76,9 @@ Tu devrais voir les numéros de version des deux. Si c'est le cas, bravo — Nod
 
 Maintenant qu'on a npm, on peut installer Claude Code en une seule commande :
 
-::terminal-block
+```bash
 npm install -g @anthropic-ai/claude-code
-::
+```
 
 Le `-g` signifie **global** : Claude Code sera disponible partout sur ta machine, pas seulement dans un projet.
 
@@ -90,16 +90,16 @@ Sur certains systèmes, npm a besoin de droits administrateur pour installer glo
 
 **Option 1** : Utiliser `sudo` (rapide mais pas idéal) :
 
-::terminal-block
+```bash
 sudo npm install -g @anthropic-ai/claude-code
-::
+```
 
 **Option 2** : Configurer npm pour ne plus avoir besoin de sudo (recommandé) :
 
-::terminal-block
+```bash
 mkdir -p ~/.npm-global
 npm config set prefix '~/.npm-global'
-::
+```
 
 Puis ajoute `~/.npm-global/bin` à ton PATH (dans `~/.zshrc` ou `~/.bashrc`).
 
@@ -107,9 +107,9 @@ Puis ajoute `~/.npm-global/bin` à ton PATH (dans `~/.zshrc` ou `~/.bashrc`).
 
 Tape cette commande pour vérifier que tout est en place :
 
-::terminal-block
+```bash
 claude --version
-::
+```
 
 Tu devrais voir le numéro de version de Claude Code s'afficher. Si c'est le cas, l'installation est réussie.
 
@@ -123,9 +123,9 @@ Tu devrais voir le numéro de version de Claude Code s'afficher. Si c'est le cas
 
 C'est le moment de vérité. Place-toi dans un dossier de ton choix et lance :
 
-::terminal-block
+```bash
 claude
-::
+```
 
 La première fois, Claude Code va te demander de t'authentifier avec ton compte Anthropic. Suis les instructions à l'écran — c'est guidé.
 
@@ -133,9 +133,9 @@ Une fois connecté, tu verras le prompt de Claude Code apparaître. Tu peux tape
 
 Essaie par exemple :
 
-::terminal-block
+```bash
 claude "Explique-moi ce qu'est une variable en JavaScript, en 3 phrases simples."
-::
+```
 
 Si tu reçois une réponse, tout fonctionne parfaitement.
 
