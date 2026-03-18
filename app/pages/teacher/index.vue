@@ -14,7 +14,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Mes classes - Nuxy'
+  title: 'Mes classes - NuxyAI'
 })
 
 const toast = useToast()

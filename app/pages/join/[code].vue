@@ -156,8 +156,8 @@ watch(user, async (newUser) => {
           <span class="text-sm">avec {{ classInfo?.teacher?.full_name || 'l\'enseignant' }}</span>
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <UButton to="/exercises/hello-javascript" class="btn-cta">
-            Commencer les exercices
+          <UButton to="/lessons" class="btn-cta">
+            Commencer les leçons
           </UButton>
           <UButton to="/profile" variant="outline">
             Voir mes classes

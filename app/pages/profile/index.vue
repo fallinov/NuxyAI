@@ -14,13 +14,13 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Mon profil - Nuxy'
+  title: 'Mon profil - NuxyAI'
 })
 
 const toast = useToast()
 const { user, profile, isTeacher, loadProfile } = useAuth()
 const { myClasses, loadMyClasses, leaveClass, updateProfile, isLoading: profileLoading } = useProfile()
-const { stats, syncFromLocalStorage } = useSupabaseProgress()
+const { stats, syncFromLocalStorage } = useLessonSupabaseProgress()
 
 // Charger les données et synchroniser la progression
 await loadProfile()
@@ -245,8 +245,8 @@ watch(profile, (newProfile) => {
             </div>
 
             <template #footer>
-              <UButton to="/" variant="soft" block>
-                Voir tous les exercices
+              <UButton to="/lessons" variant="soft" block>
+                Voir toutes les leçons
               </UButton>
             </template>
           </UCard>

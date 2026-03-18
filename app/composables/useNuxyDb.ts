@@ -1,7 +1,7 @@
 /**
- * useNuxyDb - Helper pour accéder au schéma Supabase 'nuxy'
+ * useNuxyDb - Helper pour accéder au schéma Supabase 'nuxyai'
  *
- * Ce composable encapsule l'accès au schéma 'nuxy' sur Supabase.
+ * Ce composable encapsule l'accès au schéma 'nuxyai' sur Supabase.
  * Il fournit des méthodes pour interroger les tables et appeler les fonctions RPC.
  *
  * Usage:
@@ -10,8 +10,8 @@
  *   const { data } = await rpc('join_class_by_code', { code: 'abc123' })
  */
 
-// Nom du schéma Nuxy sur Supabase
-const NUXY_SCHEMA = 'nuxy'
+// Nom du schéma NuxyAI sur Supabase
+const NUXY_SCHEMA = 'nuxyai'
 
 export const useNuxyDb = () => {
   const supabase = useSupabaseClient()

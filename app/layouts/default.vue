@@ -21,7 +21,7 @@ const { public: { appVersion } } = useRuntimeConfig()
           <!-- Logo -->
           <NuxtLink to="/" class="flex items-center gap-2">
             <NuxyLogo size="header" no-shadow />
-            <span class="text-2xl font-bold text-nuxy-green">Nuxy</span>
+            <span class="text-2xl font-bold text-nuxy-green">NuxyAI</span>
           </NuxtLink>
 
           <!-- Navigation -->
@@ -40,15 +40,15 @@ const { public: { appVersion } } = useRuntimeConfig()
                 <span class="hidden lg:inline">Accueil</span>
               </UButton>
               <UButton
-                to="/exercices"
+                to="/lessons"
                 variant="ghost"
                 color="neutral"
                 size="sm"
-                icon="i-lucide-list"
-                aria-label="Liste des exercices"
+                icon="i-lucide-book-open"
+                aria-label="Liste des leçons"
                 class="text-gray-600 dark:text-gray-400 hover:text-nuxy-green dark:hover:text-nuxy-green"
               >
-                <span class="hidden lg:inline">Exercices</span>
+                <span class="hidden lg:inline">Leçons</span>
               </UButton>
             </div>
 
@@ -81,7 +81,7 @@ const { public: { appVersion } } = useRuntimeConfig()
       <UContainer class="relative">
         <div class="flex flex-col items-center md:items-start gap-2 md:gap-4 text-gray-600 dark:text-gray-400">
           <p class="text-sm md:text-base text-center md:text-left">
-            <strong class="text-nuxy-green-dark dark:text-nuxy-green">Nuxy</strong> - Apprentissage JavaScript
+            <strong class="text-nuxy-green-dark dark:text-nuxy-green">NuxyAI</strong> - Développement avec l'IA
           </p>
           <p class="text-xs md:text-sm text-center md:text-left text-gray-500 dark:text-gray-500">
             Nuxt 4 · Vue 3 · Nuxt UI · <span class="text-gray-400 dark:text-gray-600">v{{ appVersion }}</span>

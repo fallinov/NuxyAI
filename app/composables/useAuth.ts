@@ -166,7 +166,7 @@ export const useAuth = () => {
       profile.value = null
 
       // Vider le localStorage (données safe dans Supabase)
-      const { resetProgress } = useExerciseProgress()
+      const { resetProgress } = useLessonProgress()
       resetProgress()
 
       return { success: true }

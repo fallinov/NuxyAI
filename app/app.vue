@@ -8,7 +8,7 @@
  *
  * Les headers/footers/menus sont gérés dans les layouts :
  * - layouts/default.vue : pour les pages avec navigation
- * - layouts/exercise.vue : pour les exercices plein écran
+ * - layouts/lesson.vue : pour les leçons plein écran
  */
 
 // Favicon Nuxy (dragon)

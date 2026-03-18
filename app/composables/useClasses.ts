@@ -16,14 +16,13 @@ import type {
   CreateClassInput,
   UpdateClassInput,
   ClassStatistics,
-  ExerciseProgress,
-  ExerciseError,
+  LessonProgress,
   Profile
 } from '~/types/database.types'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 
 export interface StudentProgressData extends Profile {
-  progress: ExerciseProgress[]
+  progress: LessonProgress[]
 }
 
 export const useClasses = () => {
@@ -366,7 +365,7 @@ export const useClasses = () => {
       if (profilesError) throw profilesError
 
       // Charger la progression de tous ces étudiants
-      const { data: progress, error: progressError } = await from('exercise_progress')
+      const { data: progress, error: progressError } = await from('lesson_progress')
         .select('*')
         .in('user_id', studentIds)
 
@@ -375,7 +374,7 @@ export const useClasses = () => {
       // Assembler les données
       const studentsWithProgress: StudentProgressData[] = profiles.map(profile => ({
         ...profile as Profile,
-        progress: (progress as ExerciseProgress[]).filter(p => p.user_id === profile.id)
+        progress: (progress as LessonProgress[]).filter(p => p.user_id === profile.id)
       }))
 
       return studentsWithProgress
@@ -385,65 +384,6 @@ export const useClasses = () => {
       return []
     } finally {
       isLoading.value = false
-    }
-  }
-
-  /**
-   * Charge toutes les erreurs des élèves d'une classe (pour les statistiques)
-   */
-  const getClassErrors = async (classId: string): Promise<ExerciseError[]> => {
-    if (!user.value) return []
-
-    try {
-      // Récupérer les IDs des élèves de la classe
-      const { data: members, error: membersError } = await from('class_members')
-        .select('student_id')
-        .eq('class_id', classId)
-
-      if (membersError) throw membersError
-
-      const studentIds = members.map(m => m.student_id)
-      if (studentIds.length === 0) return []
-
-      // Récupérer les erreurs de ces élèves
-      const { data, error: fetchError } = await from('exercise_errors')
-        .select('*')
-        .in('user_id', studentIds)
-        .order('created_at', { ascending: false })
-        .limit(500)
-
-      if (fetchError) throw fetchError
-
-      return data as ExerciseError[]
-    } catch (err: any) {
-      console.error('Erreur lors du chargement des erreurs de la classe:', err)
-      return []
-    }
-  }
-
-  /**
-   * Charge les erreurs d'un élève pour un exercice donné
-   */
-  const getStudentExerciseErrors = async (
-    studentId: string,
-    exerciseSlug: string
-  ): Promise<ExerciseError[]> => {
-    if (!user.value) return []
-
-    try {
-      const { data, error: fetchError } = await from('exercise_errors')
-        .select('*')
-        .eq('user_id', studentId)
-        .eq('exercise_slug', exerciseSlug)
-        .order('created_at', { ascending: false })
-        .limit(20) // Limiter aux 20 dernières erreurs
-
-      if (fetchError) throw fetchError
-
-      return data as ExerciseError[]
-    } catch (err: any) {
-      console.error('Erreur lors du chargement des erreurs:', err)
-      return []
     }
   }
 
@@ -461,7 +401,7 @@ export const useClasses = () => {
         {
           event: '*',
           schema: schema, // Utilise le schéma 'nuxy'
-          table: 'exercise_progress'
+          table: 'lesson_progress'
         },
         (payload) => {
           callback(payload)
@@ -522,8 +462,6 @@ export const useClasses = () => {
     removeStudent,
     getClassStatistics,
     getClassProgress,
-    getClassErrors,
-    getStudentExerciseErrors,
     subscribeToProgress,
     unsubscribeFromProgress,
     getInviteUrl

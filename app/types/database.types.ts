@@ -4,7 +4,7 @@
  */
 
 export type UserRole = 'student' | 'teacher'
-export type ExerciseStatus = 'not-started' | 'in-progress' | 'completed'
+export type LessonStatus = 'not-started' | 'in-progress' | 'completed'
 
 // -----------------------------------------------------------------------------
 // Tables
@@ -38,57 +38,19 @@ export interface ClassMember {
   joined_at: string
 }
 
-export interface ExerciseProgress {
+export interface LessonProgress {
   id: string // UUID
   user_id: string // UUID, référence profiles
-  exercise_slug: string
-  status: ExerciseStatus
+  lesson_slug: string
+  status: LessonStatus
   attempts: number
   completed_at: string | null
   last_attempt_at: string | null
-  saved_code: string | null
-  last_code_save_at: string | null
-  // Stats détaillées
-  first_opened_at: string | null
-  time_spent_seconds: number
-  hints_revealed: number
-  solution_viewed: boolean
-  solution_viewed_at: string | null
-  executions_count: number
-  successful_runs: number
-  errors_count: number
-  debug_context: DebugContextData | null
+  quiz_score: number | null
+  checklist_completed: string[] | null
   // Timestamps
   created_at: string
   updated_at: string
-}
-
-export interface DebugContextData {
-  app_version: string
-  browser: string
-  browser_version: string
-  os: string
-  os_version: string
-  device_type: 'mobile' | 'tablet' | 'desktop'
-  screen_width: number
-  screen_height: number
-  timezone: string
-  locale: string
-  session_id: string
-  is_online: boolean
-  recorded_at: string
-}
-
-export interface ExerciseError {
-  id: string // UUID
-  user_id: string // UUID, référence profiles
-  exercise_slug: string
-  error_type: string
-  error_message: string | null
-  error_line: number | null
-  code_snapshot: string | null
-  debug_context: DebugContextData | null
-  created_at: string
 }
 
 // -----------------------------------------------------------------------------
@@ -113,7 +75,7 @@ export interface ClassMemberWithClass extends ClassMember {
 }
 
 export interface StudentWithProgress extends Profile {
-  progress: ExerciseProgress[]
+  progress: LessonProgress[]
 }
 
 // -----------------------------------------------------------------------------
@@ -142,18 +104,18 @@ export interface UpdateClassInput {
   is_active?: boolean
 }
 
-export interface CreateExerciseProgressInput {
-  exercise_slug: string
-  status?: ExerciseStatus
+export interface CreateLessonProgressInput {
+  lesson_slug: string
+  status?: LessonStatus
 }
 
-export interface UpdateExerciseProgressInput {
-  status?: ExerciseStatus
+export interface UpdateLessonProgressInput {
+  status?: LessonStatus
   attempts?: number
   completed_at?: string | null
   last_attempt_at?: string | null
-  saved_code?: string | null
-  last_code_save_at?: string | null
+  quiz_score?: number | null
+  checklist_completed?: string[] | null
 }
 
 // -----------------------------------------------------------------------------
@@ -162,7 +124,7 @@ export interface UpdateExerciseProgressInput {
 
 export interface ClassStatistics {
   total_students: number
-  exercises_completed: number
+  lessons_completed: number
   total_attempts: number
 }
 
@@ -188,10 +150,10 @@ export interface Database {
         Insert: Omit<ClassMember, 'id' | 'joined_at'>
         Update: never // Cette table ne devrait pas être mise à jour
       }
-      exercise_progress: {
-        Row: ExerciseProgress
-        Insert: Omit<ExerciseProgress, 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Omit<ExerciseProgress, 'id' | 'user_id' | 'exercise_slug' | 'created_at'>>
+      lesson_progress: {
+        Row: LessonProgress
+        Insert: Omit<LessonProgress, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<LessonProgress, 'id' | 'user_id' | 'lesson_slug' | 'created_at'>>
       }
     }
     Functions: {

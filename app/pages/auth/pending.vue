@@ -73,7 +73,7 @@ const handleLogout = async () => {
               <div class="text-sm text-nuxy-teal-dark dark:text-nuxy-teal-light">
                 <p class="font-medium">En attendant, tu peux :</p>
                 <ul class="mt-2 space-y-1 list-disc list-inside">
-                  <li>Accéder aux exercices comme un élève</li>
+                  <li>Accéder aux leçons comme un élève</li>
                   <li>Explorer la plateforme</li>
                 </ul>
               </div>
@@ -86,7 +86,7 @@ const handleLogout = async () => {
               to="/"
               class="btn-cta py-3 text-center"
             >
-              Explorer les exercices
+              Explorer les leçons
             </NuxtLink>
             <button
               type="button"

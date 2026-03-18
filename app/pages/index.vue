@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Page d'accueil - Landing page moderne
+ * Page d'accueil - Landing page NuxyAI
  *
  * Design System unifié :
  * - Cards: rounded-2xl, p-6
@@ -9,6 +9,7 @@
  * - Sections: py-20 (CTA: py-24)
  * - Headers: font-bold, mb-12
  * - Hover: icon scale-110, border color change
+ * - Style flat Duolingo : pas de dégradés, pas de blur
  */
 
 definePageMeta({
@@ -16,81 +17,40 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Nuxy - Apprends JavaScript en codant',
-  description: 'Maîtrise JavaScript avec des micro-exercices interactifs. Gratuit, sans inscription, avec un vrai éditeur de code.'
+  title: 'NuxyAI - Apprends à coder avec l\'IA',
+  description: 'Formation gratuite de 18h pour apprendre le développement avec Claude Code. 2 phases, 7 modules, des projets concrets.'
 })
-
-import { useExercisesList } from '~/composables/useExerciseData'
 
 const { isAuthenticated, isTeacher } = useAuth()
-const { exercises, loadExercises, getModulesWithExercises } = useExercisesList()
-const supabase = useSupabaseClient()
-
-await loadExercises()
-
-// Modules avec exercices (pour les stats)
-const activeModules = computed(() => {
-  if (!exercises.value) return []
-  return getModulesWithExercises(exercises.value)
-})
-
-// Stats de la communauté (vraies données Supabase)
-const communityStats = ref({
-  users: 0,
-  exercisesCompleted: 0,
-  totalAttempts: 0,
-  inProgress: 0
-})
-
-// Charger les stats côté client uniquement (via RPC dans schema public)
-onMounted(async () => {
-  try {
-    const { data, error } = await supabase.rpc('get_community_stats')
-    if (error) throw error
-
-    if (data) {
-      communityStats.value = {
-        users: data.users || 0,
-        exercisesCompleted: data.exercisesCompleted || 0,
-        totalAttempts: data.totalAttempts || 0,
-        inProgress: data.inProgress || 0
-      }
-    }
-  } catch (error) {
-    console.error('Erreur chargement stats:', error)
-  }
-})
 </script>
 
 <template>
   <div class="min-h-screen">
     <!-- ==================== HERO ==================== -->
     <section class="relative overflow-hidden bg-gray-950 text-white">
-
       <UContainer class="relative py-20 lg:py-28">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <!-- Content -->
           <div class="text-center lg:text-left">
             <!-- Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/10 mb-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/10 mb-8">
               <span class="relative flex h-2 w-2">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-nuxy-green opacity-75" />
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-nuxy-green" />
               </span>
-              <span class="text-sm text-gray-300">{{ exercises?.length || 0 }} exercices disponibles</span>
+              <span class="text-sm text-gray-300">Formation 18h</span>
             </div>
 
             <!-- Headline -->
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-6">
-              Apprends
-              <span class="text-nuxy-green">JavaScript</span>
-              <br />en codant
+              Apprends à coder avec
+              <span class="text-nuxy-green">l'IA</span>
             </h1>
 
             <!-- Subheadline -->
             <p class="text-lg sm:text-xl text-gray-400 max-w-xl mx-auto lg:mx-0 mb-10">
-              Tu débutes en prog ? <span class="text-white font-medium">Parfait.</span>
-              Des mini-exercices, du feedback instantané, zéro prise de tête.
+              Tu débutes en dev ? <span class="text-white font-medium">Parfait.</span>
+              Claude Code est ton copilote. 18h pour devenir autonome.
             </p>
 
             <!-- CTAs -->
@@ -106,7 +66,7 @@ onMounted(async () => {
               </UButton>
               <UButton
                 v-else
-                to="/welcome"
+                to="/lessons"
                 size="xl"
                 icon="i-lucide-play"
                 class="btn-cta"
@@ -114,11 +74,11 @@ onMounted(async () => {
                 {{ isAuthenticated ? 'Continuer' : "C'est parti !" }}
               </UButton>
               <UButton
-                to="/exercices"
+                to="/lessons"
                 size="xl"
                 color="neutral"
                 variant="outline"
-                icon="i-lucide-library"
+                icon="i-lucide-book-open"
                 class="rounded-xl"
               >
                 Explorer
@@ -133,11 +93,11 @@ onMounted(async () => {
               </div>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-check-circle" class="w-4 h-4 text-nuxy-green" />
-                <span>Sans inscription</span>
+                <span>18h de formation</span>
               </div>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-check-circle" class="w-4 h-4 text-nuxy-green" />
-                <span>Aucune installation</span>
+                <span>Projets concrets</span>
               </div>
             </div>
           </div>
@@ -153,24 +113,34 @@ onMounted(async () => {
                   <div class="w-3 h-3 rounded-full bg-green-500/80" />
                 </div>
                 <div class="flex-1 text-center">
-                  <span class="text-xs text-gray-400 font-mono">script.js</span>
+                  <span class="text-xs text-gray-400 font-mono">claude-code</span>
                 </div>
               </div>
 
-              <!-- Code content -->
-              <div class="p-5 font-mono text-sm leading-relaxed">
-                <div class="mb-1">
-                  <span class="text-purple-400">let</span>
-                  <span class="text-white"> message </span>
-                  <span class="text-gray-400">=</span>
-                  <span class="text-yellow-300"> "Hello World!"</span>
+              <!-- AI conversation content -->
+              <div class="p-5 font-mono text-sm leading-relaxed space-y-3">
+                <div>
+                  <span class="text-gray-500">toi@projet $</span>
+                  <span class="text-white"> claude</span>
                 </div>
-                <div class="mb-1">
-                  <span class="text-blue-400">console</span><span class="text-white">.</span><span class="text-green-400">log</span><span class="text-white">(message)</span>
+                <div>
+                  <span class="text-nuxy-teal">Claude &gt;</span>
+                  <span class="text-gray-300"> Salut ! Qu'est-ce qu'on construit</span>
                 </div>
-                <div class="mt-3 pt-3 border-t border-white/10">
-                  <span class="text-gray-500">// Output:</span>
-                  <span class="text-green-400"> Hello World!</span>
+                <div>
+                  <span class="text-gray-300">aujourd'hui ?</span>
+                </div>
+                <div class="mt-2">
+                  <span class="text-nuxy-green">toi &gt;</span>
+                  <span class="text-white"> Une app météo en Vue</span>
+                </div>
+                <div class="mt-2">
+                  <span class="text-nuxy-teal">Claude &gt;</span>
+                  <span class="text-gray-300"> Top ! Je crée la structure</span>
+                </div>
+                <div>
+                  <span class="text-gray-300">du projet...</span>
+                  <span class="animate-pulse text-nuxy-green">_</span>
                 </div>
               </div>
             </div>
@@ -178,7 +148,7 @@ onMounted(async () => {
             <img
               src="/images/nuxy-tablette.svg"
               alt="Nuxy la mascotte"
-              class="absolute -right-4 -bottom-4 w-40 sm:w-56 lg:w-64 z-10 drop-shadow-2xl"
+              class="absolute -right-4 -bottom-4 w-40 sm:w-56 lg:w-64 z-10"
             />
           </div>
         </div>
@@ -222,15 +192,10 @@ onMounted(async () => {
                 1
               </div>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Lis la consigne</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Lis la leçon</h3>
             <p class="text-gray-600 dark:text-gray-400 mt-3 flex-grow">
-              Un concept, des exemples, une mission. Tu sais exactement quoi faire.
+              Un concept, des exemples concrets, une mission claire. Tu sais exactement quoi faire.
             </p>
-            <img
-              src="/images/screenshots/step1-consigne.png"
-              alt="Capture de la consigne"
-              class="rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg w-full mt-4"
-            />
           </div>
 
           <!-- Step 2 -->
@@ -240,15 +205,10 @@ onMounted(async () => {
                 2
               </div>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Tape ton code</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Pratique avec Claude</h3>
             <p class="text-gray-600 dark:text-gray-400 mt-3 flex-grow">
-              Direct dans le navigateur. Rien à installer, rien à configurer.
+              Lance Claude Code sur ton ordi et code en tandem avec l'IA. Tu écris, il t'aide.
             </p>
-            <img
-              src="/images/screenshots/step2-editeur.png"
-              alt="Capture de l'éditeur"
-              class="rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg w-full mt-4"
-            />
           </div>
 
           <!-- Step 3 -->
@@ -258,115 +218,105 @@ onMounted(async () => {
                 3
               </div>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Valide et passe au suivant</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Valide et progresse</h3>
             <p class="text-gray-600 dark:text-gray-400 mt-3 flex-grow">
-              Un clic, tu vois si c'est bon. Vert = bravo, rouge = on réessaie !
+              Coche les objectifs, réponds au quiz ou soumets ton projet. Ta progression est sauvegardée.
             </p>
-            <img
-              src="/images/screenshots/step3-console.png"
-              alt="Capture de la console"
-              class="rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg w-full mt-4"
-            />
           </div>
         </div>
       </UContainer>
     </section>
 
-    <!-- ==================== SOCIAL PROOF (dark) ==================== -->
-    <section class="py-20 bg-gray-950">
+    <!-- ==================== PHASES & MODULES (dark) ==================== -->
+    <section class="py-20 bg-gray-950 text-white">
       <UContainer>
         <!-- Section header -->
         <div class="text-center mb-12">
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 mb-6">
-            <span class="text-lg">🐣</span>
-            <span class="text-sm text-gray-300 font-medium">Fraîchement lancé</span>
-          </div>
-          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
-            On grandit <span class="text-nuxy-green">ensemble</span>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+            2 phases, <span class="text-nuxy-green">7 modules</span>
           </h2>
-          <p class="text-lg text-gray-400 max-w-md mx-auto">
-            Des stats modestes qu'on assume avec fierté
+          <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+            Un parcours structuré pour passer de zéro à autonome
           </p>
         </div>
 
-        <!-- Stats grid -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Users -->
-          <div class="group">
-            <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 group-hover:border-nuxy-green transition-colors duration-200">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="flex items-center justify-center w-12 h-12 bg-nuxy-green/20 rounded-xl group-hover:scale-110 transition-transform">
-                  <UIcon name="i-lucide-users" class="w-6 h-6 text-nuxy-green" />
+        <!-- Phases -->
+        <div class="grid lg:grid-cols-2 gap-8">
+          <!-- Phase 1 -->
+          <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="flex items-center justify-center w-10 h-10 bg-nuxy-green/20 rounded-xl">
+                <UIcon name="i-lucide-wrench" class="w-5 h-5 text-nuxy-green" />
+              </div>
+              <div>
+                <h3 class="text-lg font-bold">Phase 1</h3>
+                <p class="text-sm text-gray-400">Maîtriser l'outil</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">
+                <UIcon name="i-lucide-rocket" class="w-5 h-5 text-nuxy-green shrink-0" />
+                <div>
+                  <p class="text-sm font-medium">Module 1 : Premiers pas</p>
+                  <p class="text-xs text-gray-500">Découverte de l'IA et installation</p>
                 </div>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Pionniers</span>
               </div>
-              <div class="text-4xl sm:text-5xl font-black text-white mb-1 tabular-nums">
-                {{ communityStats.users || '—' }}
+              <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">
+                <UIcon name="i-lucide-message-square" class="w-5 h-5 text-nuxy-teal shrink-0" />
+                <div>
+                  <p class="text-sm font-medium">Module 2 : Communiquer avec l'IA</p>
+                  <p class="text-xs text-gray-500">Prompts efficaces et bonnes pratiques</p>
+                </div>
               </div>
-              <div class="text-gray-400 text-sm">utilisateurs inscrits</div>
-              <div class="mt-3 pt-3 border-t border-white/5 text-xs text-gray-500 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-nuxy-green rounded-full animate-pulse" />
-                dont 1 prof très motivé
+              <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">
+                <UIcon name="i-lucide-workflow" class="w-5 h-5 text-nuxy-gold shrink-0" />
+                <div>
+                  <p class="text-sm font-medium">Module 3 : Workflow efficace</p>
+                  <p class="text-xs text-gray-500">Git, terminal et organisation</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Exercises completed -->
-          <div class="group">
-            <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 group-hover:border-nuxy-teal transition-colors duration-200">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="flex items-center justify-center w-12 h-12 bg-nuxy-teal/20 rounded-xl group-hover:scale-110 transition-transform">
-                  <UIcon name="i-lucide-check-circle-2" class="w-6 h-6 text-nuxy-teal" />
-                </div>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Victoires</span>
+          <!-- Phase 2 -->
+          <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="flex items-center justify-center w-10 h-10 bg-nuxy-teal/20 rounded-xl">
+                <UIcon name="i-lucide-rocket" class="w-5 h-5 text-nuxy-teal" />
               </div>
-              <div class="text-4xl sm:text-5xl font-black text-white mb-1 tabular-nums">
-                {{ communityStats.exercisesCompleted || '—' }}
-              </div>
-              <div class="text-gray-400 text-sm">exercices validés</div>
-              <div class="mt-3 pt-3 border-t border-white/5 text-xs text-gray-500 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-nuxy-teal rounded-full animate-pulse" />
-                et ce n'est que le début
+              <div>
+                <h3 class="text-lg font-bold">Phase 2</h3>
+                <p class="text-sm text-gray-400">Développer avec l'IA</p>
               </div>
             </div>
-          </div>
-
-          <!-- In progress -->
-          <div class="group">
-            <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 group-hover:border-nuxy-gold transition-colors duration-200">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="flex items-center justify-center w-12 h-12 bg-nuxy-gold/20 rounded-xl group-hover:scale-110 transition-transform">
-                  <UIcon name="i-lucide-clock" class="w-6 h-6 text-nuxy-gold" />
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">
+                <UIcon name="i-lucide-layout" class="w-5 h-5 text-nuxy-pink shrink-0" />
+                <div>
+                  <p class="text-sm font-medium">Module 4 : HTML & CSS avec l'IA</p>
+                  <p class="text-xs text-gray-500">Créer des pages web assisté par l'IA</p>
                 </div>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">En cours</span>
               </div>
-              <div class="text-4xl sm:text-5xl font-black text-white mb-1 tabular-nums">
-                {{ communityStats.inProgress || '—' }}
-              </div>
-              <div class="text-gray-400 text-sm">exercices commencés</div>
-              <div class="mt-3 pt-3 border-t border-white/5 text-xs text-gray-500 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-nuxy-gold rounded-full animate-pulse" />
-                pause café incluse ☕
-              </div>
-            </div>
-          </div>
-
-          <!-- Total attempts -->
-          <div class="group">
-            <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 group-hover:border-nuxy-pink transition-colors duration-200">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="flex items-center justify-center w-12 h-12 bg-nuxy-pink/20 rounded-xl group-hover:scale-110 transition-transform">
-                  <UIcon name="i-lucide-play" class="w-6 h-6 text-nuxy-pink" />
+              <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">
+                <UIcon name="i-lucide-code" class="w-5 h-5 text-nuxy-lavender shrink-0" />
+                <div>
+                  <p class="text-sm font-medium">Module 5 : JavaScript avec l'IA</p>
+                  <p class="text-xs text-gray-500">Logique, interactivité et debugging</p>
                 </div>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Exécutions</span>
               </div>
-              <div class="text-4xl sm:text-5xl font-black text-white mb-1 tabular-nums">
-                {{ communityStats.totalAttempts || '—' }}
+              <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">
+                <UIcon name="i-lucide-folder-open" class="w-5 h-5 text-nuxy-gold shrink-0" />
+                <div>
+                  <p class="text-sm font-medium">Module 6 : Projet guidé</p>
+                  <p class="text-xs text-gray-500">Une app complète de A à Z</p>
+                </div>
               </div>
-              <div class="text-gray-400 text-sm">runs de code</div>
-              <div class="mt-3 pt-3 border-t border-white/5 text-xs text-gray-500 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-nuxy-pink rounded-full animate-pulse" />
-                erreurs = apprentissage 💪
+              <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">
+                <UIcon name="i-lucide-graduation-cap" class="w-5 h-5 text-nuxy-green shrink-0" />
+                <div>
+                  <p class="text-sm font-medium">Module 7 : Autonomie</p>
+                  <p class="text-xs text-gray-500">Ton projet perso, sans filet</p>
+                </div>
               </div>
             </div>
           </div>
@@ -389,40 +339,32 @@ onMounted(async () => {
 
         <!-- Features grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Editor (large) -->
-          <div class="md:col-span-2 lg:col-span-2 group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-green/50 hover:shadow-lg transition-all duration-300">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="flex items-center justify-center w-12 h-12 bg-nuxy-green/10 dark:bg-nuxy-green/20 rounded-xl group-hover:scale-110 transition-transform">
-                <UIcon name="i-lucide-code-2" class="w-6 h-6 text-nuxy-green" />
-              </div>
-              <h3 class="text-xl font-bold text-gray-900 dark:text-white">Un vrai éditeur de code</h3>
-            </div>
-            <p class="text-gray-600 dark:text-gray-400">
-              Coloration, auto-complétion, raccourcis clavier.
-            </p>
-            <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">
-              Comme les pros.
-              <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded font-mono">Ctrl</kbd> +
-              <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded font-mono">Enter</kbd>
-              pour exécuter.
-            </p>
-          </div>
-
-          <!-- Feedback -->
+          <!-- Clear lessons -->
           <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-green/50 hover:shadow-lg transition-all duration-300">
             <div class="flex items-center justify-center w-12 h-12 bg-nuxy-green/10 dark:bg-nuxy-green/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
-              <UIcon name="i-lucide-message-circle" class="w-6 h-6 text-nuxy-green" />
+              <UIcon name="i-lucide-book-open" class="w-6 h-6 text-nuxy-green" />
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Des erreurs qui t'aident</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Des leçons claires</h3>
             <p class="text-gray-600 dark:text-gray-400">
-              Pas de jargon incompréhensible. On t'explique ce qui cloche.
+              Chaque concept est expliqué simplement, avec des exemples concrets. Pas de jargon.
             </p>
           </div>
 
-          <!-- Progress -->
+          <!-- Claude copilot -->
           <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-teal/50 hover:shadow-lg transition-all duration-300">
             <div class="flex items-center justify-center w-12 h-12 bg-nuxy-teal/10 dark:bg-nuxy-teal/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
-              <UIcon name="i-lucide-trending-up" class="w-6 h-6 text-nuxy-teal" />
+              <UIcon name="i-lucide-bot" class="w-6 h-6 text-nuxy-teal" />
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Claude Code en copilote</h3>
+            <p class="text-gray-600 dark:text-gray-400">
+              Tu codes en tandem avec l'IA. Elle t'assiste, tu apprends en faisant.
+            </p>
+          </div>
+
+          <!-- Progress saved -->
+          <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-purple/50 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-center justify-center w-12 h-12 bg-nuxy-purple/10 dark:bg-nuxy-purple/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+              <UIcon name="i-lucide-cloud-check" class="w-6 h-6 text-nuxy-purple dark:text-nuxy-pink" />
             </div>
             <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Ta progression sauvegardée</h3>
             <p class="text-gray-600 dark:text-gray-400">
@@ -430,25 +372,36 @@ onMounted(async () => {
             </p>
           </div>
 
-          <!-- Modules -->
-          <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-purple/50 hover:shadow-lg transition-all duration-300">
-            <div class="flex items-center justify-center w-12 h-12 bg-nuxy-purple/10 dark:bg-nuxy-purple/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
-              <UIcon name="i-lucide-layers" class="w-6 h-6 text-nuxy-purple dark:text-nuxy-pink" />
+          <!-- 7 modules -->
+          <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-gold/50 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-center justify-center w-12 h-12 bg-nuxy-gold/10 dark:bg-nuxy-gold/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+              <UIcon name="i-lucide-layers" class="w-6 h-6 text-nuxy-gold-dark" />
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ activeModules.length }} modules bien rangés</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">7 modules structurés</h3>
             <p class="text-gray-600 dark:text-gray-400">
-              Variables, fonctions, DOM, API... Un pas après l'autre.
+              De l'installation à l'autonomie. Un pas après l'autre, sans se perdre.
             </p>
           </div>
 
-          <!-- Hints -->
-          <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-gold/50 hover:shadow-lg transition-all duration-300">
-            <div class="flex items-center justify-center w-12 h-12 bg-nuxy-gold/10 dark:bg-nuxy-gold/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
-              <UIcon name="i-lucide-lightbulb" class="w-6 h-6 text-nuxy-gold" />
+          <!-- Concrete projects -->
+          <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-pink/50 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-center justify-center w-12 h-12 bg-nuxy-pink/10 dark:bg-nuxy-pink/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+              <UIcon name="i-lucide-folder-open" class="w-6 h-6 text-nuxy-pink" />
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Des indices si tu bloques</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Des projets concrets</h3>
             <p class="text-gray-600 dark:text-gray-400">
-              On te donne un coup de pouce, pas la réponse. Tu gardes le mérite !
+              Pas de théorie en l'air. Tu construis de vraies apps, de A à Z.
+            </p>
+          </div>
+
+          <!-- Your pace -->
+          <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-nuxy-lavender/50 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-center justify-center w-12 h-12 bg-nuxy-lavender/10 dark:bg-nuxy-lavender/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+              <UIcon name="i-lucide-timer" class="w-6 h-6 text-nuxy-lavender" />
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Ton rythme</h3>
+            <p class="text-gray-600 dark:text-gray-400">
+              Pas de deadline. Tu avances quand tu veux, comme tu veux.
             </p>
           </div>
         </div>
@@ -469,13 +422,13 @@ onMounted(async () => {
           <!-- Content -->
           <div class="text-center lg:text-left order-1 lg:order-2">
             <h2 class="text-4xl sm:text-5xl font-bold mb-6">
-              Alors, on code ?
+              Alors, on code avec l'IA ?
             </h2>
             <p class="text-xl text-gray-400 max-w-md mb-10">
-              Rejoins les pionniers. Ton premier exercice t'attend.
+              18h de formation gratuite. Ton premier module t'attend.
             </p>
             <UButton
-              to="/welcome"
+              to="/lessons"
               size="xl"
               icon="i-lucide-play"
               class="btn-cta"

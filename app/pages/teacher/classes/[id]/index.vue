@@ -4,11 +4,10 @@
  *
  * - Infos classe (nom, description, lien invitation)
  * - Liste des élèves inscrits
- * - Tableau de progression temps réel
+ * - Tableau de progression (leçons complétées, dernière activité)
  */
 
 import type { StudentProgressData } from '~/composables/useClasses'
-import type { ExerciseProgress, ExerciseError } from '~/types/database.types'
 
 definePageMeta({
   layout: 'default',
@@ -26,31 +25,19 @@ const {
   regenerateInviteCode,
   getClassProgress,
   getClassStatistics,
-  getStudentExerciseErrors,
   subscribeToProgress,
   unsubscribeFromProgress,
   getInviteUrl,
   isLoading
 } = useClasses()
 
-const { exercises, loadExercises } = useExercisesList()
-
 // États
 const studentsProgress = ref<StudentProgressData[]>([])
 const statistics = ref<any>(null)
 const showRemoveConfirm = ref<string | null>(null)
 
-// État de la modal de visualisation du code
-const showCodeModal = ref(false)
-const selectedStudentName = ref('')
-const selectedExerciseTitle = ref('')
-const selectedProgress = ref<ExerciseProgress | null>(null)
-const selectedErrors = ref<ExerciseError[]>([])
-const isLoadingErrors = ref(false)
-
 // Charger les données
 await loadClassWithMembers(classId)
-await loadExercises()
 
 if (!currentClass.value) {
   throw createError({
@@ -61,7 +48,7 @@ if (!currentClass.value) {
 
 // SEO
 useSeoMeta({
-  title: `${currentClass.value?.name || 'Classe'} - Nuxy`
+  title: `${currentClass.value?.name || 'Classe'} - NuxyAI`
 })
 
 // Charger la progression et les stats
@@ -78,8 +65,7 @@ await loadData()
 
 // S'abonner aux mises à jour temps réel
 onMounted(() => {
-  subscribeToProgress(classId, async (payload) => {
-    // Recharger les données quand il y a une mise à jour
+  subscribeToProgress(classId, async () => {
     await loadData()
   })
 })
@@ -137,59 +123,35 @@ const handleRemoveStudent = async (studentId: string) => {
   }
 }
 
-// Helper pour obtenir le statut d'un exercice pour un élève
-const getStudentExerciseStatus = (student: StudentProgressData, exerciseSlug: string) => {
-  const progress = student.progress.find(p => p.exercise_slug === exerciseSlug)
-  return progress?.status || 'not-started'
+// Helpers pour les stats par élève
+const getCompletedLessons = (student: StudentProgressData): number => {
+  return student.progress.filter(p => p.status === 'completed').length
 }
 
-// Helper pour obtenir le nombre de tentatives
-const getStudentAttempts = (student: StudentProgressData, exerciseSlug: string) => {
-  const progress = student.progress.find(p => p.exercise_slug === exerciseSlug)
-  return progress?.attempts || 0
+const getLastActivity = (student: StudentProgressData): string | null => {
+  if (student.progress.length === 0) return null
+
+  const dates = student.progress
+    .map(p => p.last_attempt_at || p.updated_at)
+    .filter(Boolean)
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+
+  return dates[0] || null
 }
 
-// Couleurs pour les statuts
-const statusColors: Record<string, string> = {
-  'completed': 'bg-green-500',
-  'in-progress': 'bg-orange-500',
-  'not-started': 'bg-gray-300 dark:bg-gray-600'
-}
+const formatDate = (dateStr: string): string => {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMin = Math.floor(diffMs / 60000)
+  const diffH = Math.floor(diffMs / 3600000)
+  const diffD = Math.floor(diffMs / 86400000)
 
-const statusIcons: Record<string, string> = {
-  'completed': 'i-lucide-check',
-  'in-progress': 'i-lucide-play',
-  'not-started': ''
-}
-
-// Ouvrir la modal avec les détails complets d'un exercice
-const handleCellClick = async (student: StudentProgressData, exercise: any) => {
-  const progress = student.progress.find(p => p.exercise_slug === exercise.id)
-
-  // On peut ouvrir même sans code (pour voir les stats)
-  selectedStudentName.value = student.full_name || student.email
-  selectedExerciseTitle.value = exercise.title
-  selectedProgress.value = progress || null
-  selectedErrors.value = []
-  showCodeModal.value = true
-
-  // Charger les erreurs en arrière-plan
-  if (progress) {
-    isLoadingErrors.value = true
-    try {
-      selectedErrors.value = await getStudentExerciseErrors(student.id, exercise.id)
-    } catch (err) {
-      console.error('Erreur lors du chargement des erreurs:', err)
-    } finally {
-      isLoadingErrors.value = false
-    }
-  }
-}
-
-// Vérifie si une cellule a du code sauvegardé
-const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boolean => {
-  const progress = student.progress.find(p => p.exercise_slug === exerciseSlug)
-  return !!progress?.saved_code
+  if (diffMin < 1) return 'À l\'instant'
+  if (diffMin < 60) return `Il y a ${diffMin} min`
+  if (diffH < 24) return `Il y a ${diffH}h`
+  if (diffD < 7) return `Il y a ${diffD}j`
+  return date.toLocaleDateString('fr-FR')
 }
 </script>
 
@@ -243,7 +205,7 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
           </div>
         </div>
 
-        <!-- Statistiques rapides + lien vers stats détaillées -->
+        <!-- Statistiques rapides -->
         <div v-if="statistics" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <div class="grid grid-cols-3 gap-4">
             <div class="text-center">
@@ -256,7 +218,7 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
               <div class="text-3xl font-bold text-green-600 dark:text-green-400">
                 {{ statistics.exercises_completed }}
               </div>
-              <div class="text-sm text-gray-500">Exercices complétés</div>
+              <div class="text-sm text-gray-500">Leçons complétées</div>
             </div>
             <div class="text-center">
               <div class="text-3xl font-bold text-orange-600 dark:text-orange-400">
@@ -265,21 +227,11 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
               <div class="text-sm text-gray-500">Tentatives totales</div>
             </div>
           </div>
-          <div v-if="studentsProgress.length > 0" class="mt-4 text-center">
-            <UButton
-              icon="i-lucide-bar-chart-3"
-              variant="outline"
-              color="primary"
-              :to="`/teacher/classes/${classId}/stats`"
-            >
-              Statistiques détaillées
-            </UButton>
-          </div>
         </div>
       </div>
 
-      <!-- Tableau de progression (PLEINE LARGEUR) -->
-      <UCard v-if="studentsProgress.length > 0">
+      <!-- Tableau de progression -->
+      <UCard v-if="studentsProgress.length > 0" class="max-w-screen-2xl mx-auto">
         <template #header>
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -295,16 +247,17 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
           <table class="w-full">
             <thead>
               <tr class="border-b border-gray-200 dark:border-gray-700">
-                <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 sticky left-0 bg-white dark:bg-gray-800 z-10">
+                <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
                   Élève
                 </th>
-                <th
-                  v-for="exercise in exercises"
-                  :key="exercise.id"
-                  class="text-center py-3 px-2 font-medium text-gray-700 dark:text-gray-300 min-w-[60px]"
-                  :title="exercise.title"
-                >
-                  <span class="text-xs">{{ exercise.exerciseNumber || exercise.id }}</span>
+                <th class="text-center py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
+                  Leçons complétées
+                </th>
+                <th class="text-center py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
+                  Dernière activité
+                </th>
+                <th class="text-right py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -314,7 +267,7 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
                 :key="student.id"
                 class="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/50"
               >
-                <td class="py-3 px-4 sticky left-0 bg-white dark:bg-gray-800 z-10">
+                <td class="py-3 px-4">
                   <div class="flex items-center gap-3">
                     <UAvatar
                       :text="student.full_name?.charAt(0) || student.email.charAt(0).toUpperCase()"
@@ -322,7 +275,7 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
                       :ui="{ background: 'bg-primary-100 dark:bg-primary-900/30' }"
                       class="text-primary-600 dark:text-primary-400"
                     />
-                    <div class="flex-1 min-w-0">
+                    <div class="min-w-0">
                       <div class="font-medium text-gray-900 dark:text-white truncate">
                         {{ student.full_name || 'Sans nom' }}
                       </div>
@@ -330,61 +283,32 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
                         {{ student.email }}
                       </div>
                     </div>
-                    <UButton
-                      icon="i-lucide-x"
-                      size="xs"
-                      variant="ghost"
-                      color="red"
-                      aria-label="Retirer l'élève de la classe"
-                      @click="showRemoveConfirm = student.id"
-                    />
                   </div>
                 </td>
-                <td
-                  v-for="exercise in exercises"
-                  :key="exercise.id"
-                  class="py-3 px-2 text-center"
-                >
-                  <UTooltip
-                    :text="`${exercise.title} - ${getStudentAttempts(student, exercise.id)} tentative(s)${hasSavedCode(student, exercise.id) ? ' — Clique pour voir le code' : ''}`"
-                  >
-                    <div
-                      :class="[
-                        'w-8 h-8 mx-auto rounded-lg flex items-center justify-center transition-all',
-                        statusColors[getStudentExerciseStatus(student, exercise.id)],
-                        hasSavedCode(student, exercise.id)
-                          ? 'cursor-pointer hover:ring-2 hover:ring-primary-500 hover:scale-110'
-                          : ''
-                      ]"
-                      @click="handleCellClick(student, exercise)"
-                    >
-                      <UIcon
-                        v-if="statusIcons[getStudentExerciseStatus(student, exercise.id)]"
-                        :name="statusIcons[getStudentExerciseStatus(student, exercise.id)]"
-                        class="w-4 h-4 text-white"
-                      />
-                    </div>
-                  </UTooltip>
+                <td class="py-3 px-4 text-center">
+                  <span class="font-semibold text-nuxy-green-dark dark:text-nuxy-green">
+                    {{ getCompletedLessons(student) }}
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center text-sm text-gray-500">
+                  <template v-if="getLastActivity(student)">
+                    {{ formatDate(getLastActivity(student)!) }}
+                  </template>
+                  <span v-else class="italic">Aucune</span>
+                </td>
+                <td class="py-3 px-4 text-right">
+                  <UButton
+                    icon="i-lucide-x"
+                    size="xs"
+                    variant="ghost"
+                    color="red"
+                    aria-label="Retirer l'élève de la classe"
+                    @click="showRemoveConfirm = student.id"
+                  />
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <!-- Légende -->
-        <div class="flex items-center gap-6 pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4 rounded bg-green-500"></div>
-            <span class="text-sm text-gray-600 dark:text-gray-400">Complété</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4 rounded bg-orange-500"></div>
-            <span class="text-sm text-gray-600 dark:text-gray-400">En cours</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4 rounded bg-gray-300 dark:bg-gray-600"></div>
-            <span class="text-sm text-gray-600 dark:text-gray-400">Pas commencé</span>
-          </div>
         </div>
       </UCard>
 
@@ -439,16 +363,6 @@ const hasSavedCode = (student: StudentProgressData, exerciseSlug: string): boole
           </UCard>
         </template>
       </UModal>
-
-      <!-- Slideover de visualisation des détails élève -->
-      <TeacherStudentCodeSlideover
-        v-model:open="showCodeModal"
-        :student-name="selectedStudentName"
-        :exercise-title="selectedExerciseTitle"
-        :progress="selectedProgress"
-        :errors="selectedErrors"
-        :is-loading-errors="isLoadingErrors"
-      />
     </div>
   </div>
 </template>
