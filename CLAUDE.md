@@ -135,6 +135,11 @@ app/
 │   │   └── ProseH2.vue        # Heading h2 personnalisé
 │   ├── auth/                  # Authentification
 │   │   └── UserMenu.vue       # Menu utilisateur
+│   ├── content/               # Composants MDC (rendus dans le Markdown)
+│   │   ├── Alert.vue          # Bloc d'alerte
+│   │   ├── AiConversation.vue # Échange IA simulé (chat bubbles)
+│   │   ├── ProseH2.vue        # Heading h2 personnalisé
+│   │   └── TerminalBlock.vue  # Bloc terminal (détection OS, copier)
 │   └── NuxyLogo.vue           # Logo mascotte dragon
 ├── composables/
 │   ├── useLessonProgress.ts       # Progression localStorage
@@ -147,9 +152,10 @@ app/
 │   ├── useProfile.ts              # Gestion profil utilisateur
 │   └── useUserId.ts               # Helper ID utilisateur
 ├── pages/
-│   ├── index.vue                  # Page d'accueil
-│   ├── lessons.vue                # Liste des leçons
-│   ├── lessons/[slug].vue         # Page leçon individuelle
+│   ├── index.vue                  # Page d'accueil (landing)
+│   ├── lessons/
+│   │   ├── index.vue              # Catalogue des leçons (par phase/module)
+│   │   └── [slug].vue             # Page leçon individuelle
 │   ├── auth/                      # Login, Register, Callback, Forgot/Reset password, Pending
 │   ├── profile/                   # Profil utilisateur
 │   ├── join/                      # Rejoindre classe via code
@@ -167,11 +173,21 @@ app/
 └── app.css                        # Design system (polices, variables CSS)
 
 content/
-└── lessons/                       # Leçons Markdown avec frontmatter
-    ├── decouverte-ia.md
-    ├── installer-claude-code.md
-    ├── premier-echange.md
-    └── ...
+└── lessons/                       # 14 leçons Markdown (Phase 1)
+    ├── decouverte-ia.md           # 1.1 Guide
+    ├── installer-claude-code.md   # 1.2 Exercise
+    ├── premier-echange.md         # 1.3 Exercise
+    ├── naviguer-dans-un-projet.md # 1.4 Exercise
+    ├── quiz-module-1.md           # 1.5 Quiz
+    ├── art-du-prompt.md           # 2.1 Guide
+    ├── donner-du-contexte.md      # 2.2 Exercise
+    ├── mode-plan.md               # 2.3 Exercise
+    ├── iterer-et-corriger.md      # 2.4 Exercise
+    ├── quiz-module-2.md           # 2.5 Quiz
+    ├── claude-md-memoire.md       # 3.1 Guide
+    ├── configurer-environnement.md # 3.2 Exercise
+    ├── gerer-le-contexte.md       # 3.3 Guide
+    └── quiz-module-3.md           # 3.4 Quiz
 
 public/
 ├── fonts/
@@ -218,10 +234,12 @@ objectives:
   - Objectif d'apprentissage 1
   - Objectif d'apprentissage 2
 
-# Pour type: exercise — items de la checklist
+# Pour type: exercise — items de la checklist (objets {id, label})
 checklist:
-  - "Étape 1 à réaliser"
-  - "Étape 2 à réaliser"
+  - id: step-1
+    label: "Étape 1 à réaliser"
+  - id: step-2
+    label: "Étape 2 à réaliser"
 
 # Pour type: quiz — questions QCM
 quiz:
@@ -239,17 +257,23 @@ quiz:
 Texte en Markdown classique avec les composants MDC disponibles.
 ```
 
-### Composants MDC disponibles
+### Commandes terminal
 
-Dans le contenu Markdown, utiliser ces composants :
+Utiliser des blocs de code standard markdown (pas de composant MDC) :
 
-```markdown
-::terminal-block
+````markdown
 ```bash
 npm install something
 ```
-::
+````
 
+Nuxt Content ajoute automatiquement la coloration syntaxique Shiki et un bouton "Copier".
+
+### Composant MDC : conversations IA
+
+Pour les exemples d'échanges avec Claude Code, utiliser le composant `::ai-conversation` avec la prop `messages` en YAML :
+
+```markdown
 ::ai-conversation
 ---
 messages:

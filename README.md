@@ -29,7 +29,7 @@ cp .env.example .env  # Remplir les credentials Supabase
 npm run dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000).
+Ouvrir [http://localhost:3006](http://localhost:3006).
 
 ## Structure du projet
 
